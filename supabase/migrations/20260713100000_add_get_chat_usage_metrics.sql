@@ -48,3 +48,17 @@ revoke execute on function public.get_chat_usage_metrics(timestamptz, timestampt
 revoke execute on function public.get_chat_usage_metrics(timestamptz, timestamptz, uuid) from anon;
 revoke execute on function public.get_chat_usage_metrics(timestamptz, timestamptz, uuid) from authenticated;
 grant execute on function public.get_chat_usage_metrics(timestamptz, timestamptz, uuid) to service_role;
+
+-- Anjo pilot: deny direct API execution of the functions defined above.
+-- Preserve access only for trusted server-side service_role calls.
+DO $anjo$
+DECLARE target regprocedure;
+BEGIN
+  FOR target IN SELECT p.oid::regprocedure FROM pg_proc p
+    JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND p.proname IN ('get_chat_usage_metrics')
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated', target);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO service_role', target);
+  END LOOP;
+END $anjo$;

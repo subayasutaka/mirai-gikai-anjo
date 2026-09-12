@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["kuromoji"],
+  outputFileTracingIncludes: {
+    // pnpmのリンク配下ではなく実体を含め、Vercelの配置ファイルの衝突を避ける。
+    "/**": ["../node_modules/.pnpm/kuromoji@*/node_modules/kuromoji/dict/**/*"],
+  },
   experimental: {
     serverSourceMaps: true,
   },

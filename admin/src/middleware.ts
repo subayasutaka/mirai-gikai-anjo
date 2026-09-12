@@ -4,14 +4,21 @@ import { checkAdminPermission } from "@/lib/auth/permissions";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  // MCP エンドポイントはBearerトークンで独自認証する。Supabase auth の呼び出しを避けるため
-  // updateSession() より前にバイパスする。
-  // NOTE: `startsWith("/api/mcp")` だと `/api/mcpfoo` も一致するため、境界を意識した比較にする。
   const pathname = request.nextUrl.pathname;
-  if (pathname === "/api/mcp" || pathname.startsWith("/api/mcp/")) {
-    return NextResponse.next();
-  }
-
+  const allowed =
+    [
+      "/",
+      "/login",
+      "/api/auth/callback",
+      "/bills",
+      "/bills/new",
+      "/diet-sessions",
+      "/tags",
+      "/admins",
+      "/pilot",
+    ].includes(pathname) ||
+    /^\/bills\/[0-9a-f-]{36}\/(edit|contents\/edit)$/i.test(pathname);
+  if (!allowed) return new NextResponse("Not found", { status: 404 });
   const { supabaseResponse, user } = await updateSession(request);
 
   // OAuth コールバックはそのまま通す（Route Handler で処理する）
@@ -59,6 +66,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!api/anjo-transcribe(?:/|$)|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

@@ -29,7 +29,7 @@ export function BillCreateForm({ dietSessions }: BillCreateFormProps) {
     defaultValues: {
       name: "",
       status: "preparing",
-      originating_house: "HR",
+      originating_house: "ANJO",
       status_note: null,
       submitted_date: new Date().toLocaleDateString("sv-SE", {
         timeZone: "Asia/Tokyo",
@@ -42,7 +42,7 @@ export function BillCreateForm({ dietSessions }: BillCreateFormProps) {
       is_review_completed: false,
       diet_session_id: defaultDietSessionId,
       knowledge_source: "",
-      use_knowledge_source_in_chat: false,
+      use_knowledge_source_in_chat: true,
     },
   });
 

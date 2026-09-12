@@ -1,0 +1,14 @@
+.git
+.DS_Store
+**/Icon?
+.vercel
+.claude
+.env
+.env.*
+**/.env
+**/.env.*
+node_modules
+**/node_modules
+**/.next
+artifacts
+docs/安城版みらい議会_*

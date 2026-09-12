@@ -111,6 +111,18 @@
     "./interview-report/sync-opinions": {
       "types": "./src/interview-report/sync-opinions.ts",
       "default": "./src/interview-report/sync-opinions.ts"
+    },
+    "./anjo/config": {
+      "types": "./src/anjo/config.ts",
+      "default": "./src/anjo/config.ts"
+    },
+    "./anjo/ai-policy": {
+      "types": "./src/anjo/ai-policy.ts",
+      "default": "./src/anjo/ai-policy.ts"
+    },
+    "./anjo/execute-answer": {
+      "types": "./src/anjo/execute-answer.ts",
+      "default": "./src/anjo/execute-answer.ts"
     }
   },
   "dependencies": {

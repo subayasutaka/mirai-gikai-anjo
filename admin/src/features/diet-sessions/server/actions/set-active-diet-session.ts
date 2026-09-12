@@ -1,6 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { routes } from "@/lib/routes";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -26,6 +28,7 @@ export async function setActiveDietSession(input: SetActiveDietSessionInput) {
     // Fetch the updated session to return
     const data = await findDietSessionById(input.id);
 
+    revalidatePath(routes.dietSessions());
     await invalidateWebCache([
       WEB_CACHE_TAGS.DIET_SESSIONS,
       WEB_CACHE_TAGS.BILLS,

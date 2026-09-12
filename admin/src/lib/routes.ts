@@ -8,6 +8,7 @@
 
 // ── 静的ルート ──────────────────────────────────────
 export const routes = {
+  pilot: () => "/pilot" as const,
   login: () => "/login" as const,
   bills: () => "/bills" as const,
   billNew: () => "/bills/new" as const,

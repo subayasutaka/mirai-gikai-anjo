@@ -1,3 +1,4 @@
+import { ANJO_SOURCE_MAX_BYTES } from "@mirai-gikai/shared/anjo/config";
 import type { Database } from "@mirai-gikai/supabase";
 import { z } from "zod";
 
@@ -23,7 +24,7 @@ const billBaseSchema = z.object({
     "enacted",
     "rejected",
   ]),
-  originating_house: z.enum(["HR", "HC"]),
+  originating_house: z.enum(["ANJO", "HR", "HC"]),
   status_note: z
     .string()
     .max(500, "ステータス備考は500文字以内で入力してください")
@@ -32,7 +33,7 @@ const billBaseSchema = z.object({
     .string()
     .refine(
       (val) => val === "" || /^\d{4}-\d{2}-\d{2}$/.test(val),
-      "法案提出日は YYYY-MM-DD 形式で入力してください"
+      "議案提出日は YYYY-MM-DD 形式で入力してください"
     )
     .optional(),
   thumbnail_url: z.string().nullable().optional(),
@@ -41,7 +42,7 @@ const billBaseSchema = z.object({
     .string()
     .transform((val) => (val === "" ? null : val))
     .nullable()
-    .refine((val) => val === null || val.startsWith("http"), {
+    .refine((val) => val === null || /^https:\/\//.test(val), {
       message: "有効なURLを入力してください",
     })
     .optional(),
@@ -56,7 +57,11 @@ const billBaseSchema = z.object({
     .optional(),
   knowledge_source: z
     .string()
-    .max(40_000, "ナレッジソースは40,000文字以内で入力してください")
+    .refine(
+      (value) =>
+        new TextEncoder().encode(value).length <= ANJO_SOURCE_MAX_BYTES,
+      "AI用資料を短くしてください。日本語で約3,000文字が目安です。"
+    )
     .optional(),
   use_knowledge_source_in_chat: z.boolean().optional(),
 });

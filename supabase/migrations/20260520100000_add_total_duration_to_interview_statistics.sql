@@ -115,3 +115,17 @@ revoke execute on function public.get_interview_statistics(uuid) from public;
 revoke execute on function public.get_interview_statistics(uuid) from anon;
 revoke execute on function public.get_interview_statistics(uuid) from authenticated;
 grant execute on function public.get_interview_statistics(uuid) to service_role;
+
+-- Anjo pilot: deny direct API execution of the functions defined above.
+-- Preserve access only for trusted server-side service_role calls.
+DO $anjo$
+DECLARE target regprocedure;
+BEGIN
+  FOR target IN SELECT p.oid::regprocedure FROM pg_proc p
+    JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND p.proname IN ('get_interview_statistics')
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated', target);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO service_role', target);
+  END LOOP;
+END $anjo$;
