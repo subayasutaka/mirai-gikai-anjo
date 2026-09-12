@@ -68,6 +68,7 @@ export async function AnjoBillIndex() {
           {featured && (
             <AnjoProgress
               status={featured.status}
+              dates={featured}
               note={featured.status_note}
               sessionName={`${featured.diet_sessions?.name || "掲載議案"} / ${featured.name.split(" ")[0]}`}
             />

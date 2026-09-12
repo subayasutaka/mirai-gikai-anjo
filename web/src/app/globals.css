@@ -725,6 +725,17 @@ button {
   font-size: 10px;
   margin-top: 4px;
 }
+.anjo-step-date {
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 6px;
+  white-space: nowrap;
+}
+.anjo-step-planned {
+  font-size: 10px;
+  color: var(--color-anjo-muted);
+  margin-top: 3px;
+}
 .anjo-here {
   font-size: 10px;
   font-weight: 800;
@@ -1270,6 +1281,9 @@ button {
     font-size: 9px;
     max-width: 65px;
     line-height: 1.7;
+  }
+  .anjo-step-date {
+    font-size: 10px;
   }
   .anjo-here {
     font-size: 9px;

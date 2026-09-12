@@ -69,7 +69,7 @@ export async function AnjoBillPage({
           )}
         </p>
       </header>
-      <AnjoProgress status={bill.status} note={bill.status_note} />
+      <AnjoProgress status={bill.status} note={bill.status_note} dates={bill} />
       <div className="anjo-detail-layout">
         <div>
           {!bill.is_review_completed && (

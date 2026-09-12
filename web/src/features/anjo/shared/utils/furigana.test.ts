@@ -28,6 +28,37 @@ beforeAll(async () => {
 
 describe("automatic local furigana", () => {
   it.each([
+    ["日", "にち"],
+    ["月", "げつ"],
+    ["火", "か"],
+    ["水", "すい"],
+    ["木", "もく"],
+    ["金", "きん"],
+    ["土", "ど"],
+  ])("reads the weekday abbreviation %s as %s", (weekday, reading) => {
+    const text = `9月3日（${weekday}）`;
+    const segments = readingSegments(text, (value) =>
+      tokenizer.tokenize(value)
+    );
+    expect(segments).toEqual([
+      { text: "9月3日", reading: "くがつみっか" },
+      { text: "（" },
+      { text: weekday, reading },
+      { text: "）" },
+    ]);
+    expect(segments.map((segment) => segment.text).join("")).toBe(text);
+  });
+
+  it("preserves ordinary readings of wood and water outside a date", () => {
+    expect(
+      readingSegments("木と水", (value) => tokenizer.tokenize(value))
+    ).toEqual([
+      { text: "木", reading: "き" },
+      { text: "と" },
+      { text: "水", reading: "みず" },
+    ]);
+  });
+  it.each([
     ["詳しく", "クワシク", [{ text: "詳", reading: "くわ" }, { text: "しく" }]],
     ["進ん", "ススン", [{ text: "進", reading: "すす" }, { text: "ん" }]],
     [

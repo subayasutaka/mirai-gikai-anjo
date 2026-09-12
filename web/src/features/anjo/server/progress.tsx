@@ -4,6 +4,10 @@ import {
   ANJO_STATUS_LABELS,
   getAnjoProgressIndex,
 } from "@mirai-gikai/shared/anjo/config";
+import {
+  type AnjoProgressDates,
+  formatProgressDate,
+} from "@mirai-gikai/shared/anjo/progress-dates";
 import { Check, MapPin } from "lucide-react";
 import { Furigana } from "./furigana";
 
@@ -11,10 +15,12 @@ export function AnjoProgress({
   status,
   note,
   sessionName,
+  dates,
 }: {
   status: string;
   note?: string | null;
   sessionName?: string;
+  dates: AnjoProgressDates;
 }) {
   const current = getAnjoProgressIndex(status);
   return (
@@ -36,34 +42,56 @@ export function AnjoProgress({
         </span>
       </div>
       <ol className="anjo-progress-steps">
-        {ANJO_PROGRESS_STEPS.map((step, index) => (
-          <li
-            key={step.label}
-            data-state={
-              index === current ? "current" : index < current ? "done" : "next"
-            }
-            aria-current={index === current ? "step" : undefined}
-          >
-            <span className="anjo-step-marker">
-              {index < current ? (
-                <Check size={17} aria-label="通過した段階" />
-              ) : (
-                index + 1
-              )}
-            </span>
-            <strong>
-              <Furigana>{step.label}</Furigana>
-            </strong>
-            <span className="anjo-step-description">
-              <Furigana>{step.description}</Furigana>
-            </span>
-            {index === current && (
-              <span className="anjo-here">
-                <Furigana>{"ここまで進んでいます"}</Furigana>
+        {ANJO_PROGRESS_STEPS.map((step, index) => {
+          const date = dates[step.dateField];
+          const dateLabel = formatProgressDate(date);
+          return (
+            <li
+              key={step.label}
+              data-state={
+                index === current
+                  ? "current"
+                  : index < current
+                    ? "done"
+                    : "next"
+              }
+              aria-current={index === current ? "step" : undefined}
+            >
+              <span className="anjo-step-marker">
+                {index < current ? (
+                  <Check size={17} aria-label="通過した段階" />
+                ) : (
+                  index + 1
+                )}
               </span>
-            )}
-          </li>
-        ))}
+              <strong>
+                <Furigana>{step.label}</Furigana>
+              </strong>
+              <span className="anjo-step-date">
+                {dateLabel ? (
+                  <time dateTime={date ?? undefined}>
+                    <Furigana>{dateLabel}</Furigana>
+                  </time>
+                ) : (
+                  <Furigana>{"日付未確認"}</Furigana>
+                )}
+              </span>
+              {dateLabel && index > current && (
+                <span className="anjo-step-planned">
+                  <Furigana>{"予定"}</Furigana>
+                </span>
+              )}
+              <span className="anjo-step-description">
+                <Furigana>{step.description}</Furigana>
+              </span>
+              {index === current && (
+                <span className="anjo-here">
+                  <Furigana>{"ここまで進んでいます"}</Furigana>
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ol>
       {note && (
         <p className="anjo-progress-note">

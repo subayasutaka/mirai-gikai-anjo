@@ -15,10 +15,10 @@ export const ANJO_SOURCE_MAX_BYTES = 9000;
 
 // This Anjo fork reuses the upstream status enum for a single municipal chamber.
 export const ANJO_PROGRESS_STEPS = [
-  { label: "上程", description: "議案を議会に出す" },
-  { label: "議案質疑", description: "本会議で質問する" },
-  { label: "委員会質疑", description: "委員会で詳しく調べる" },
-  { label: "採決", description: "賛成・反対を決める" },
+  { label: "上程", description: "議案を議会に出す", dateField: "introduction_date" },
+  { label: "議案質疑", description: "本会議で質問する", dateField: "plenary_question_date" },
+  { label: "委員会質疑", description: "委員会で詳しく調べる", dateField: "committee_question_date" },
+  { label: "採決", description: "賛成・反対を決める", dateField: "vote_date" },
 ] as const;
 
 export function getAnjoProgressIndex(status: string): number {

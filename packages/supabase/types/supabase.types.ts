@@ -125,14 +125,17 @@ export type Database = {
       }
       bills: {
         Row: {
+          committee_question_date: string | null
           created_at: string
           diet_session_id: string | null
           id: string
+          introduction_date: string | null
           is_featured: boolean
           is_review_completed: boolean
           knowledge_source: string | null
           name: string
           originating_house: Database["public"]["Enums"]["house_enum"]
+          plenary_question_date: string | null
           publish_status: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order: number | null
           published_at: string | null
@@ -146,16 +149,20 @@ export type Database = {
           thumbnail_url: string | null
           updated_at: string
           use_knowledge_source_in_chat: boolean
+          vote_date: string | null
         }
         Insert: {
+          committee_question_date?: string | null
           created_at?: string
           diet_session_id?: string | null
           id?: string
+          introduction_date?: string | null
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
           name: string
           originating_house: Database["public"]["Enums"]["house_enum"]
+          plenary_question_date?: string | null
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
           published_at?: string | null
@@ -169,16 +176,20 @@ export type Database = {
           thumbnail_url?: string | null
           updated_at?: string
           use_knowledge_source_in_chat?: boolean
+          vote_date?: string | null
         }
         Update: {
+          committee_question_date?: string | null
           created_at?: string
           diet_session_id?: string | null
           id?: string
+          introduction_date?: string | null
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
           name?: string
           originating_house?: Database["public"]["Enums"]["house_enum"]
+          plenary_question_date?: string | null
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
           published_at?: string | null
@@ -192,6 +203,7 @@ export type Database = {
           thumbnail_url?: string | null
           updated_at?: string
           use_knowledge_source_in_chat?: boolean
+          vote_date?: string | null
         }
         Relationships: [
           {
@@ -1401,11 +1413,21 @@ export type Database = {
         Returns: undefined
       }
       reserve_anjo_ai_request: {
-        Args: { p_bill_id: string; p_client_hash: string; p_id: string; p_allow_draft?: boolean }
+        Args: {
+          p_allow_draft?: boolean
+          p_bill_id: string
+          p_client_hash: string
+          p_id: string
+        }
         Returns: string
       }
       save_anjo_bill_contents: {
-        Args: { p_bill_id: string; p_normal: Json; p_hard: Json; p_knowledge_source: string }
+        Args: {
+          p_bill_id: string
+          p_hard: Json
+          p_knowledge_source: string
+          p_normal: Json
+        }
         Returns: undefined
       }
       set_active_diet_session: {

@@ -116,6 +116,10 @@
       "types": "./src/anjo/config.ts",
       "default": "./src/anjo/config.ts"
     },
+    "./anjo/progress-dates": {
+      "types": "./src/anjo/progress-dates.ts",
+      "default": "./src/anjo/progress-dates.ts"
+    },
     "./anjo/ai-policy": {
       "types": "./src/anjo/ai-policy.ts",
       "default": "./src/anjo/ai-policy.ts"

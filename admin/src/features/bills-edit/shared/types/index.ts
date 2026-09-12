@@ -1,4 +1,5 @@
 import { ANJO_SOURCE_MAX_BYTES } from "@mirai-gikai/shared/anjo/config";
+import { isProgressDate } from "@mirai-gikai/shared/anjo/progress-dates";
 import type { Database } from "@mirai-gikai/supabase";
 import { z } from "zod";
 
@@ -10,8 +11,18 @@ export type BillInsert = Database["public"]["Tables"]["bills"]["Insert"];
 // 公開ステータス型
 export type BillPublishStatus = "draft" | "published" | "coming_soon";
 
+const progressDateSchema = z
+  .string()
+  .refine(isProgressDate, "実在する日付を YYYY-MM-DD 形式で入力してください")
+  .nullable()
+  .optional();
+
 // 共通のバリデーションスキーマ
 const billBaseSchema = z.object({
+  introduction_date: progressDateSchema,
+  plenary_question_date: progressDateSchema,
+  committee_question_date: progressDateSchema,
+  vote_date: progressDateSchema,
   name: z
     .string()
     .min(1, "議案名は必須です")

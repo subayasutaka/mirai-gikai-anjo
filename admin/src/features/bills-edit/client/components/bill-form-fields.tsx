@@ -1,5 +1,8 @@
 "use client";
-import { ANJO_STATUS_LABELS } from "@mirai-gikai/shared/anjo/config";
+import {
+  ANJO_PROGRESS_STEPS,
+  ANJO_STATUS_LABELS,
+} from "@mirai-gikai/shared/anjo/config";
 import type { Control } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -77,6 +80,37 @@ export function BillFormFields({
           </FormItem>
         )}
       />
+      <fieldset className="space-y-3">
+        <legend className="font-medium">議案の進み方・各段階の日付</legend>
+        <p className="text-sm text-gray-600">
+          公式日程や審議記録で確認した日付を入力してください。まだ進んでいない段階は「予定」と表示します。日付だけでは審議状況は変わりません。未確認の日付は空欄にします。
+        </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {ANJO_PROGRESS_STEPS.map((step) => (
+            <FormField
+              key={step.dateField}
+              control={control}
+              name={step.dateField}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{step.label}の日付</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(event) =>
+                        field.onChange(event.target.value || null)
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+        </div>
+      </fieldset>
       <FormField
         control={control}
         name="submitted_date"
