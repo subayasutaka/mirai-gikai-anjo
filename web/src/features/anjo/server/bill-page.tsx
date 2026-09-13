@@ -6,16 +6,16 @@ import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { AnjoChat } from "../client/chat";
 import { InitialDifficulty } from "../client/reading-preferences";
-import { AnjoMarkdown, Furigana } from "./furigana";
-import { AnjoProgress } from "./progress";
-import { TopicCard } from "./topic-card";
-import { listAnjoTopics } from "./topic-repository";
 import {
-  type TopicSearch,
   readTopicSearch,
+  type TopicSearch,
   topicQuery,
 } from "../shared/topic-navigation";
+import { AnjoMarkdown, Furigana } from "./furigana";
+import { AnjoProgress } from "./progress";
 import { getAnjoBill } from "./repository";
+import { TopicCard } from "./topic-card";
+import { listAnjoTopics } from "./topic-repository";
 
 export async function AnjoBillPage({
   id,
@@ -108,7 +108,12 @@ export async function AnjoBillPage({
           </div>
         </section>
       )}
-      <AnjoProgress status={bill.status} note={bill.status_note} dates={bill} />
+      <AnjoProgress
+        status={bill.status}
+        note={bill.status_note}
+        dates={bill}
+        documentName={bill.name}
+      />
       <div className="anjo-detail-layout">
         <div>
           {!bill.is_review_completed && (

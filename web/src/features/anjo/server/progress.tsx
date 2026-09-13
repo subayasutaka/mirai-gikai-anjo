@@ -1,9 +1,12 @@
 import "server-only";
 import {
   ANJO_PROGRESS_STEPS,
-  ANJO_STATUS_LABELS,
   getAnjoProgressIndex,
 } from "@mirai-gikai/shared/anjo/config";
+import {
+  getAnjoDocumentKind,
+  getAnjoDocumentStatus,
+} from "@mirai-gikai/shared/anjo/document-kind";
 import {
   type AnjoProgressDates,
   formatProgressDate,
@@ -16,13 +19,50 @@ export function AnjoProgress({
   note,
   sessionName,
   dates,
+  documentName = "",
 }: {
   status: string;
   note?: string | null;
   sessionName?: string;
   dates: AnjoProgressDates;
+  documentName?: string;
 }) {
+  const kind = getAnjoDocumentKind(documentName);
+  if (kind === "report") {
+    const dateLabel = formatProgressDate(dates.introduction_date);
+    return (
+      <section className="anjo-progress" aria-label="報告の位置づけ">
+        <h2>
+          <Furigana>この報告について</Furigana>
+        </h2>
+        <p>
+          <Furigana>
+            議会への報告資料です。可決・否決を決める採決の対象ではありません。
+          </Furigana>
+        </p>
+        {dateLabel && (
+          <p>
+            <Furigana>{`提出：${dateLabel}`}</Furigana>
+          </p>
+        )}
+        {note && (
+          <p className="anjo-progress-note">
+            <Furigana>{note}</Furigana>
+          </p>
+        )}
+      </section>
+    );
+  }
   const current = getAnjoProgressIndex(status);
+  const steps = ANJO_PROGRESS_STEPS.map((step, index) =>
+    kind === "certification" && index === 2
+      ? {
+          ...step,
+          label: "決算審査",
+          description: "分科会・決算特別委員会で調べる",
+        }
+      : step
+  );
   return (
     <section className="anjo-progress" aria-label="議案の進み方">
       <div className="anjo-progress-heading">
@@ -37,12 +77,14 @@ export function AnjoProgress({
         <span className="anjo-current-label">
           <MapPin size={15} aria-hidden="true" />
           <Furigana>
-            {current < 0 ? "状況を確認中" : ANJO_STATUS_LABELS[status]}
+            {current < 0
+              ? "状況を確認中"
+              : getAnjoDocumentStatus(documentName, status)}
           </Furigana>
         </span>
       </div>
       <ol className="anjo-progress-steps">
-        {ANJO_PROGRESS_STEPS.map((step, index) => {
+        {steps.map((step, index) => {
           const date = dates[step.dateField];
           const dateLabel = formatProgressDate(date);
           return (
@@ -73,7 +115,11 @@ export function AnjoProgress({
                     <Furigana>{dateLabel}</Furigana>
                   </time>
                 ) : (
-                  <Furigana>{"日付未確認"}</Furigana>
+                  <Furigana>
+                    {kind === "certification" && index === 2
+                      ? "日程は本文に記載"
+                      : "日付未確認"}
+                  </Furigana>
                 )}
               </span>
               {dateLabel && index > current && (

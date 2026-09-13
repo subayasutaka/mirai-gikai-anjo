@@ -131,6 +131,10 @@
     "./anjo/topics": {
       "types": "./src/anjo/topics.ts",
       "default": "./src/anjo/topics.ts"
+    },
+    "./anjo/document-kind": {
+      "types": "./src/anjo/document-kind.ts",
+      "default": "./src/anjo/document-kind.ts"
     }
   },
   "dependencies": {

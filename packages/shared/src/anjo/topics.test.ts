@@ -1,6 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { createTopicPrompt, EMPTY_TOPIC_CONTENT, topicContentSchema, topicEditSchema, topicKnowledge, topicStatusNote, isTopicPublic } from "./topics";
 
+it("報告の誤登録された採決日をAIへ渡さず、決算認定の用語を保持する", () => {
+  const base = { name: "報告第12号", status: "enacted", status_note: null, introduction_date: "2026-08-27", plenary_question_date: null, committee_question_date: null, vote_date: "2026-09-15" };
+  const report = topicStatusNote([base]);
+  expect(report).toContain("採決の対象ではありません");
+  expect(report).not.toContain("2026-09-15");
+  expect(report).not.toContain("原案可決");
+  const certification = topicStatusNote([{ ...base, name: "認定第7号" }]);
+  expect(certification).toContain("採決・認定");
+  expect(certification).not.toContain("原案可決");
+});
+
 const content = {
   ...EMPTY_TOPIC_CONTENT, title: "財源の変更", formalTitle: "財源更正", summary: "支出は増減なし", description: "同じ額の一般財源を減らす。",
   target: "事業の財源", period: "2026年度", moneyLabel: "支出の増減", moneyValue: "0円", importantNote: "サービスを追加する意味ではない。",

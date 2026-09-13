@@ -1,5 +1,5 @@
-import { ANJO_STATUS_LABELS } from "@mirai-gikai/shared/anjo/config";
 import { z } from "zod";
+import { getAnjoDocumentKind, getAnjoDocumentStatus } from "./document-kind";
 
 // Fixed model and conservative price ceiling; no caller-controlled model/provider.
 export const ANJO_AI_MODEL = "alibaba/qwen3.8-flash";
@@ -15,6 +15,7 @@ export const questionSchema = z
 export const ANJO_SYSTEM_PROMPT = `あなたは「みらい議会＠安城」の公開資料案内係です。日本語で短く明確に答えてください。
 参照資料に記載された事実だけを根拠にしてください。知識や推測で補わず、資料で確認できない場合は「この資料からは確認できません」と明示してください。
 法案・条例案の提出と可決・施行を区別してください。予定日を決定済みの事実にしないでください。
+決算認定は過年度の収入・支出や経営実績を確認するものです。新年度の予算や新たな料金改定と混同しないでください。報告案件を採決待ちの議案と扱ったり、可決・否決を推測したりしてはいけません。
 「議決結果は未確認」は「可決していない」という意味ではありません。未確認なら「可決済みかどうかは、この資料からは確認できません」とだけ判断し、「可決済みではありません」「まだ可決されていません」などの断定は禁止します。
 施行日を答えるときは、資料に書かれた適用基準（利用許可の日など）も併記してください。
 運営者すば康貴の賛否、政治的意見、選挙の呼びかけ、市民の意見を創作してはいけません。本人の立場を問われたら、このページには本人の政治的見解は掲載されていないと答えてください。
@@ -35,7 +36,8 @@ export function createAnjoPrompt(
 ) {
   const source = JSON.stringify({
     議案名: bill.name,
-    登録状態: bill.status_label || ANJO_STATUS_LABELS[bill.status] || "確認中",
+    資料種別: getAnjoDocumentKind(bill.name),
+    登録状態: bill.status_label || getAnjoDocumentStatus(bill.name, bill.status),
     状態の確認メモ: bill.status_note,
     参照資料: bill.knowledge_source,
   });

@@ -1,5 +1,8 @@
 import "server-only";
-import { ANJO_STATUS_LABELS } from "@mirai-gikai/shared/anjo/config";
+import {
+  getAnjoDocumentKind,
+  getAnjoDocumentStatus,
+} from "@mirai-gikai/shared/anjo/document-kind";
 import { formatProgressDate } from "@mirai-gikai/shared/anjo/progress-dates";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -7,8 +10,8 @@ import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { AnjoChat } from "../client/chat";
 import {
-  type TopicSearch,
   readTopicSearch,
+  type TopicSearch,
   topicQuery,
 } from "../shared/topic-navigation";
 import { AnjoMarkdown, Furigana } from "./furigana";
@@ -93,7 +96,7 @@ export async function AnjoTopicPage({
           {bills
             .map(
               (b) =>
-                `${b.name.split(" ")[0]}：${ANJO_STATUS_LABELS[b.status] || "確認中"}`
+                `${b.name.split(" ")[0]}：${getAnjoDocumentStatus(b.name, b.status)}`
             )
             .join(" ／ ")}
         </Furigana>
@@ -148,7 +151,11 @@ export async function AnjoTopicPage({
             </strong>
             {bills.map((b) => (
               <p key={b.id}>
-                <Furigana>{`${b.name.split(" ")[0]}：${formatProgressDate(b.vote_date) || "日付未確認"}${["enacted", "rejected"].includes(b.status) ? `・${ANJO_STATUS_LABELS[b.status]}` : "・予定（結果未確認）"}`}</Furigana>
+                <Furigana>
+                  {getAnjoDocumentKind(b.name) === "report"
+                    ? `${b.name.split(" ")[0]}：採決の対象ではありません。`
+                    : `${b.name.split(" ")[0]}：${formatProgressDate(b.vote_date) || "日付未確認"}${["enacted", "rejected"].includes(b.status) ? `・${getAnjoDocumentStatus(b.name, b.status)}` : "・予定（結果未確認）"}`}
+                </Furigana>
               </p>
             ))}
           </li>

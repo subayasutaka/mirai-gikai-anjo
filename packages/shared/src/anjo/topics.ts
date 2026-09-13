@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createAnjoPrompt } from "./ai-policy";
-import { ANJO_STATUS_LABELS } from "./config";
+import { getAnjoDocumentKind, getAnjoDocumentStatus } from "./document-kind";
 
 export const TOPIC_CATEGORIES = ["福祉", "子育て", "暮らし", "まちづくり", "教育", "行政", "その他"] as const;
 const short = z.string().trim().min(1).max(250);
@@ -47,8 +47,10 @@ export type TopicBillContext = {
   committee_question_date: string | null; vote_date: string | null;
 };
 export function topicStatusNote(bills: TopicBillContext[]) {
-  return bills.map(bill => [bill.name, `登録状態：${ANJO_STATUS_LABELS[bill.status] || "確認中"}`,
-    `上程：${bill.introduction_date || "未確認"}／議案質疑：${bill.plenary_question_date || "未確認"}／採決日：${bill.vote_date || "未確認"}${["enacted","rejected"].includes(bill.status)?"":"（予定・結果未確認）"}`,
+  return bills.map(bill => [bill.name, `登録状態：${getAnjoDocumentStatus(bill.name, bill.status)}`,
+    getAnjoDocumentKind(bill.name) === "report"
+      ? `提出：${bill.introduction_date || "未確認"}／議会への報告。採決の対象ではありません。`
+      : `上程：${bill.introduction_date || "未確認"}／議案質疑：${bill.plenary_question_date || "未確認"}／採決日：${bill.vote_date || "未確認"}${["enacted","rejected"].includes(bill.status)?"":"（予定・結果未確認）"}`,
     bill.status_note || "補足メモは未登録です。",
   ].join("\n")).join("\n\n");
 }

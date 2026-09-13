@@ -49,4 +49,28 @@ describe("安城AIの入力・費用制限", () => {
     expect(estimateAnjoCost(1000, 500)).toBeCloseTo(0.000395);
     expect(estimateAnjoCost(24000, 1000)).toBeLessThan(0.01);
   });
+  it("報告と決算の意味を状態・参照資料と一緒に渡す", () => {
+    const report = createAnjoPrompt(
+      {
+        name: "報告第12号 専決処分",
+        status: "introduced",
+        status_note: "議会への報告",
+        knowledge_source: "損害賠償の額",
+      },
+      "可決した？"
+    );
+    expect(report).toContain('"資料種別":"report"');
+    expect(report).toContain("報告資料を掲載");
+    const certification = createAnjoPrompt(
+      {
+        name: "認定第8号 下水道決算",
+        status: "enacted",
+        status_note: null,
+        knowledge_source: "2025年度決算",
+      },
+      "追加予算？"
+    );
+    expect(certification).toContain("採決・認定");
+    expect(certification).not.toContain("原案可決");
+  });
 });
