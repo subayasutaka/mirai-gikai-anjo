@@ -38,10 +38,11 @@ describe("安城AIの上限予約と回答処理", () => {
       status: 200,
     });
     expect(deps.record).toHaveBeenCalledWith({
+      model: "google/gemini-2.5-flash-lite",
       state: "completed",
       input_tokens: 1000,
       output_tokens: 500,
-      actual_usd: 0.000395,
+      actual_usd: 0.0003,
       duration_ms: expect.any(Number),
     });
     expect(deps.generate).toHaveBeenCalledTimes(1);
@@ -53,6 +54,7 @@ describe("安城AIの上限予約と回答処理", () => {
     expect(deps.reserve).toHaveBeenCalledTimes(1);
     expect(deps.generate).toHaveBeenCalledTimes(1);
     expect(deps.record).toHaveBeenCalledWith({
+      model: "google/gemini-2.5-flash-lite",
       state: "failed",
       duration_ms: expect.any(Number),
     });

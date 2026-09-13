@@ -1,6 +1,9 @@
 import "server-only";
 import { createHmac, randomUUID } from "node:crypto";
-import { ANJO_AI_MODEL } from "@mirai-gikai/shared/anjo/ai-policy";
+import {
+  ANJO_AI_MODEL,
+  ANJO_AI_PROVIDER_OPTIONS,
+} from "@mirai-gikai/shared/anjo/ai-policy";
 import { executeAnjoAnswer } from "@mirai-gikai/shared/anjo/execute-answer";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import { gateway, generateText } from "ai";
@@ -53,10 +56,7 @@ export async function generateDeliberationDraft(
         maxOutputTokens: 8000,
         maxRetries: 0,
         abortSignal: AbortSignal.timeout(60000),
-        providerOptions: {
-          gateway: { only: ["alibaba"] },
-          alibaba: { enableThinking: false },
-        },
+        providerOptions: ANJO_AI_PROVIDER_OPTIONS,
       });
       return {
         text: generated.text,

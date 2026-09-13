@@ -1,6 +1,7 @@
-import { estimateAnjoCost } from "./ai-policy";
+import { ANJO_AI_MODEL, estimateAnjoCost } from "./ai-policy";
 
 type Usage = {
+  model: string;
   state: "completed" | "failed";
   input_tokens?: number;
   output_tokens?: number;
@@ -47,6 +48,7 @@ export async function executeAnjoAnswer(
     const result = await deps.generate();
     const answer = result.text.trim();
     await deps.record({
+      model: ANJO_AI_MODEL,
       state: answer ? "completed" : "failed",
       input_tokens: result.inputTokens,
       output_tokens: result.outputTokens,
@@ -62,7 +64,7 @@ export async function executeAnjoAnswer(
   } catch {
     // Recording failures must not result in a retry of a billable generation.
     try {
-      await deps.record({ state: "failed", duration_ms: Date.now() - started });
+      await deps.record({ model: ANJO_AI_MODEL, state: "failed", duration_ms: Date.now() - started });
     } catch {
       /* The reservation remains counted even when recording fails. */
     }

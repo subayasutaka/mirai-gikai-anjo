@@ -46,7 +46,7 @@ describe("安城AIの入力・費用制限", () => {
     expect(p).toContain("可決済み？");
   });
   it("入力と出力の単価を分けて推計する", () => {
-    expect(estimateAnjoCost(1000, 500)).toBeCloseTo(0.000395);
+    expect(estimateAnjoCost(1000, 500)).toBeCloseTo(0.0003);
     expect(estimateAnjoCost(24000, 1000)).toBeLessThan(0.01);
   });
   it("人事案の提出予定と候補者未公表を、同意済みと混同せずAIへ渡す", () => {

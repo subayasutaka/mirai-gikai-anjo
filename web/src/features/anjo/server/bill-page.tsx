@@ -173,7 +173,7 @@ export async function AnjoBillPage({
                 rel="noopener noreferrer"
                 className="anjo-text-link"
               >
-                <Furigana>公式の議案書を開く</Furigana>
+                <Furigana>公式の資料を開く</Furigana>
                 <ExternalLink size={16} />
               </a>
             )}

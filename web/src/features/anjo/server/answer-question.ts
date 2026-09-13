@@ -5,6 +5,7 @@ import { gateway, generateText } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
 import {
   ANJO_AI_MODEL,
+  ANJO_AI_PROVIDER_OPTIONS,
   ANJO_SYSTEM_PROMPT,
   createAnjoPrompt,
   MAX_OUTPUT_TOKENS,
@@ -118,10 +119,7 @@ export async function answerAnjoQuestion(request: NextRequest) {
         maxOutputTokens: MAX_OUTPUT_TOKENS,
         maxRetries: 0,
         abortSignal: AbortSignal.timeout(25000),
-        providerOptions: {
-          gateway: { only: ["alibaba"] },
-          alibaba: { enableThinking: false },
-        },
+        providerOptions: ANJO_AI_PROVIDER_OPTIONS,
       });
       return {
         text: generated.text,

@@ -2,7 +2,12 @@ import { z } from "zod";
 import { getAnjoDocumentKind, getAnjoDocumentStatus } from "./document-kind";
 
 // Fixed model and conservative price ceiling; no caller-controlled model/provider.
-export const ANJO_AI_MODEL = "alibaba/qwen3.8-flash";
+// Verified with the existing Gateway free credits on 2026-09-14.
+export const ANJO_AI_MODEL = "google/gemini-2.5-flash-lite";
+export const ANJO_AI_PROVIDER_OPTIONS = {
+  gateway: { only: ["google"] },
+  google: { thinkingConfig: { thinkingBudget: 0 } },
+};
 export const MAX_PROMPT_BYTES = 16000;
 export const MAX_OUTPUT_TOKENS = 1000;
 export const questionSchema = z
@@ -52,6 +57,6 @@ export function createAnjoPrompt(
 }
 
 export function estimateAnjoCost(inputTokens: number, outputTokens: number) {
-  // USD per million tokens; official model page checked 2026-09-12.
-  return (inputTokens * 0.16 + outputTokens * 0.47) / 1_000_000;
+  // USD per million tokens; Gateway model catalog checked 2026-09-14.
+  return (inputTokens * 0.1 + outputTokens * 0.4) / 1_000_000;
 }
