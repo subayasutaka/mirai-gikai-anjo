@@ -164,6 +164,16 @@ describe("automatic local furigana", () => {
       "さいけつ",
     ]);
   });
+  it("reads water-intake wells and school-meal kitchens as facility names", () => {
+    const result = readingSegments("取水井と中部調理場", (part) =>
+      tokenizer.tokenize(part)
+    );
+    expect(result).toContainEqual({ text: "取水井", reading: "しゅすいせい" });
+    expect(result).toContainEqual({
+      text: "調理場",
+      reading: "ちょうりじょう",
+    });
+  });
   it("keeps unknown and non-kanji words without inventing readings", () => {
     expect(
       readingSegments("未知語カナ", () => [
