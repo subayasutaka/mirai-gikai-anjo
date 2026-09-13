@@ -8,6 +8,7 @@ export const MAX_OUTPUT_TOKENS = 1000;
 export const questionSchema = z
   .object({
     billId: z.string().uuid(),
+    topicId: z.string().uuid().optional(),
     question: z.string().trim().min(1).max(500),
   })
   .strict();
@@ -26,6 +27,7 @@ export function createAnjoPrompt(
   bill: {
     name: string;
     status: string;
+    status_label?: string;
     status_note: string | null;
     knowledge_source: string | null;
   },
@@ -33,7 +35,7 @@ export function createAnjoPrompt(
 ) {
   const source = JSON.stringify({
     議案名: bill.name,
-    登録状態: ANJO_STATUS_LABELS[bill.status] || "確認中",
+    登録状態: bill.status_label || ANJO_STATUS_LABELS[bill.status] || "確認中",
     状態の確認メモ: bill.status_note,
     参照資料: bill.knowledge_source,
   });

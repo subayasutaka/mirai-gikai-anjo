@@ -8,7 +8,7 @@ export async function listAnjoBills() {
     createAdminClient()
       .from("bills")
       .select(
-        "id,name,status,status_note,submitted_date,introduction_date,plenary_question_date,committee_question_date,vote_date,bill_contents(title,summary,difficulty_level),diet_sessions(name)"
+        "id,name,diet_session_id,status,status_note,submitted_date,introduction_date,plenary_question_date,committee_question_date,vote_date,bill_contents(title,summary,difficulty_level),diet_sessions(name,slug,start_date)"
       )
       .eq("publish_status", "published")
       .order("submitted_date", { ascending: false })

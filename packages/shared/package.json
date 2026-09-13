@@ -127,6 +127,10 @@
     "./anjo/execute-answer": {
       "types": "./src/anjo/execute-answer.ts",
       "default": "./src/anjo/execute-answer.ts"
+    },
+    "./anjo/topics": {
+      "types": "./src/anjo/topics.ts",
+      "default": "./src/anjo/topics.ts"
     }
   },
   "dependencies": {

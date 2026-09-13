@@ -64,6 +64,77 @@ export type Database = {
           },
         ]
       }
+      anjo_topic_bills: {
+        Row: {
+          bill_id: string
+          topic_id: string
+        }
+        Insert: {
+          bill_id: string
+          topic_id: string
+        }
+        Update: {
+          bill_id?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anjo_topic_bills_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anjo_topic_bills_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "anjo_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anjo_topics: {
+        Row: {
+          content: Json
+          created_at: string
+          diet_session_id: string
+          id: string
+          is_review_completed: boolean
+          publish_status: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          diet_session_id: string
+          id?: string
+          is_review_completed?: boolean
+          publish_status?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          diet_session_id?: string
+          id?: string
+          is_review_completed?: boolean
+          publish_status?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anjo_topics_diet_session_id_fkey"
+            columns: ["diet_session_id"]
+            isOneToOne: false
+            referencedRelation: "diet_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_rate_limits: {
         Row: {
           key: string
@@ -1429,6 +1500,19 @@ export type Database = {
           p_normal: Json
         }
         Returns: undefined
+      }
+      save_anjo_topic: {
+        Args: {
+          p_bill_ids: string[]
+          p_content: Json
+          p_expected_updated_at?: string
+          p_id: string
+          p_publish_status: string
+          p_reviewed: boolean
+          p_session_id: string
+          p_sort_order: number
+        }
+        Returns: string
       }
       set_active_diet_session: {
         Args: { target_session_id: string }

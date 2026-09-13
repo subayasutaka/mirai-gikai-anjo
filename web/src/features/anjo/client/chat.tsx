@@ -11,10 +11,12 @@ import { RubyText } from "./reading-preferences";
 
 export function AnjoChat({
   billId,
+  topicId,
   enabled,
   billTitle,
 }: {
   billId: string;
+  topicId?: string;
   enabled: boolean;
   billTitle?: ReactNode;
 }) {
@@ -32,7 +34,7 @@ export function AnjoChat({
       const response = await fetch("/api/anjo-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ billId, question }),
+        body: JSON.stringify({ billId, topicId, question }),
       });
       const result = await response.json();
       setReadings(result.readings || {});
@@ -70,7 +72,9 @@ export function AnjoChat({
         </Link>
       )}
       <p>
-        <RubyText>{CHAT_COPY.disclaimer}</RubyText>
+        <RubyText>
+          {topicId ? CHAT_COPY.topicDisclaimer : CHAT_COPY.disclaimer}
+        </RubyText>
       </p>
       {!enabled && (
         <p className="anjo-note">
@@ -134,7 +138,9 @@ export function AnjoChat({
               </ReactMarkdown>
             </div>
             <p className="anjo-small">
-              <RubyText>{CHAT_COPY.answerNote}</RubyText>
+              <RubyText>
+                {topicId ? CHAT_COPY.topicAnswerNote : CHAT_COPY.answerNote}
+              </RubyText>
             </p>
           </div>
         )}

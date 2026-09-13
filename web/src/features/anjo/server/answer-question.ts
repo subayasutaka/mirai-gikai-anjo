@@ -12,6 +12,11 @@ import {
 } from "../shared/ai-policy";
 import { executeAnjoAnswer } from "../shared/execute-answer";
 import { getMarkdownReadings } from "./furigana";
+import {
+  createTopicPrompt,
+  topicStatusNote,
+} from "@mirai-gikai/shared/anjo/topics";
+import { listAnjoTopics } from "./topic-repository";
 
 async function fail(message: string, status: number) {
   return NextResponse.json(
@@ -55,12 +60,32 @@ export async function answerAnjoQuestion(request: NextRequest) {
   if (
     !bill ||
     !bill.use_knowledge_source_in_chat ||
-    !bill.knowledge_source?.trim()
+    (!parsed.data.topicId && !bill.knowledge_source?.trim())
   )
     return fail("質問用の資料がまだ登録されていません。", 404);
   let prompt: string;
   try {
-    prompt = createAnjoPrompt(bill, parsed.data.question);
+    if (parsed.data.topicId) {
+      const topic = (await listAnjoTopics()).find(
+        (t) =>
+          t.id === parsed.data.topicId &&
+          t.anjo_topic_bills.some((link) => link.bill_id === bill.id)
+      );
+      if (!topic)
+        return fail("この内容の質問用資料は公開されていません。", 404);
+      prompt = createTopicPrompt(
+        topic.content,
+        topic.diet_sessions?.name || "会期未登録",
+        topicStatusNote(
+          topic.anjo_topic_bills.flatMap((link) =>
+            link.bills ? [link.bills] : []
+          )
+        ),
+        parsed.data.question
+      );
+    } else {
+      prompt = createAnjoPrompt(bill, parsed.data.question);
+    }
   } catch {
     return fail("資料の長さを運営者が確認しています。", 503);
   }

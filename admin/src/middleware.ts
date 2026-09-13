@@ -3,22 +3,12 @@ import { NextResponse } from "next/server";
 import { checkAdminPermission } from "@/lib/auth/permissions";
 import { updateSession } from "@/lib/supabase/middleware";
 
+import { isAnjoAdminRoute } from "@/features/anjo/shared/route-policy";
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const allowed =
-    [
-      "/",
-      "/login",
-      "/api/auth/callback",
-      "/bills",
-      "/bills/new",
-      "/diet-sessions",
-      "/tags",
-      "/admins",
-      "/pilot",
-    ].includes(pathname) ||
-    /^\/bills\/[0-9a-f-]{36}\/(edit|contents\/edit)$/i.test(pathname);
-  if (!allowed) return new NextResponse("Not found", { status: 404 });
+  if (!isAnjoAdminRoute(pathname))
+    return new NextResponse("Not found", { status: 404 });
   const { supabaseResponse, user } = await updateSession(request);
 
   // OAuth コールバックはそのまま通す（Route Handler で処理する）

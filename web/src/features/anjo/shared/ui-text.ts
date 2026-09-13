@@ -4,6 +4,8 @@ export const CHAT_COPY = {
   scope: "いま質問できる議案",
   disclaimer:
     "この議案の登録資料だけを参照します。資料にないことは分からないと答えます。氏名や連絡先などの個人情報は入力しないでください。",
+  topicDisclaimer:
+    "この内容と関係する議案の登録資料を参照します。資料にないことは分からないと答えます。氏名や連絡先などの個人情報は入力しないでください。",
   unavailable: "AIは接続準備中です。現在、質問は送信されません。",
   changeQuestion: "どんなことが変わりますか？",
   dateQuestion: "いつから変わりますか？",
@@ -14,6 +16,8 @@ export const CHAT_COPY = {
   answerTitle: "AIの回答",
   answerNote:
     "AIは誤ることがあります。議案ページの「公式の議案書」で確認してください。",
+  topicAnswerNote:
+    "AIは誤ることがあります。このページの「原資料と確認した範囲」で確認してください。",
   failed: "回答を取得できませんでした。",
   communicationFailed: "通信に失敗しました。",
 } as const;

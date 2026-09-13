@@ -27,6 +27,19 @@ beforeAll(async () => {
 });
 
 describe("automatic local furigana", () => {
+  it("reads monthly budget periods without treating 分から as 分かる", () => {
+    const text = "10月分から12月分まで";
+    const result = readingSegments(text, (part) => tokenizer.tokenize(part));
+    expect(result).toContainEqual({
+      text: "10月分",
+      reading: "じゅうがつぶん",
+    });
+    expect(result).toContainEqual({
+      text: "12月分",
+      reading: "じゅうにがつぶん",
+    });
+    expect(result.map((part) => part.text).join("")).toBe(text);
+  });
   it.each([
     ["日", "にち"],
     ["月", "げつ"],

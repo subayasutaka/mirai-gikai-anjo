@@ -7,6 +7,7 @@ import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 const navigationLinks = [
+  { href: routes.topics(), label: "暮らしの内容" },
   { href: routes.bills(), label: "議案管理" },
   { href: routes.dietSessions(), label: "会期管理" },
   { href: routes.tags(), label: "タグ管理" },

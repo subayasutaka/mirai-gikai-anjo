@@ -8,23 +8,39 @@ import { AnjoChat } from "../client/chat";
 import { InitialDifficulty } from "../client/reading-preferences";
 import { AnjoMarkdown, Furigana } from "./furigana";
 import { AnjoProgress } from "./progress";
+import { TopicCard } from "./topic-card";
+import { listAnjoTopics } from "./topic-repository";
+import {
+  type TopicSearch,
+  readTopicSearch,
+  topicQuery,
+} from "../shared/topic-navigation";
 import { getAnjoBill } from "./repository";
 
 export async function AnjoBillPage({
   id,
   token,
   difficulty,
+  search = {},
 }: {
   id: string;
   token?: string;
   difficulty?: string;
+  search?: TopicSearch;
 }) {
   const bill = await getAnjoBill(id, token);
   if (!bill) notFound();
+  const topics = (await listAnjoTopics()).filter((t) =>
+    t.anjo_topic_bills.some((link) => link.bill_id === id)
+  );
+  const query = topicQuery(readTopicSearch(search));
   return (
     <article>
       <InitialDifficulty difficulty={difficulty} />
-      <Link className="anjo-text-link" href={routes.billsList()}>
+      <Link
+        className="anjo-text-link"
+        href={{ pathname: routes.home(), search: query }}
+      >
         ← <Furigana>議案一覧へ</Furigana>
       </Link>
       {token && (
@@ -69,6 +85,29 @@ export async function AnjoBillPage({
           )}
         </p>
       </header>
+      {topics.length > 0 && (
+        <p className="anjo-panel anjo-lead">
+          <Furigana>
+            {bill.bill_contents.find((c) => c.difficulty_level === "normal")
+              ?.summary || ""}
+          </Furigana>
+        </p>
+      )}
+      {topics.length > 0 && (
+        <section className="anjo-bill-topics">
+          <h2 className="anjo-browse-title">
+            <Furigana>この議案に含まれる内容</Furigana>
+          </h2>
+          <p className="anjo-small">
+            <Furigana>{`${topics.length}内容を個別に説明しています。一部抜粋のため、カードの金額を足して議案全体の総額にはしないでください。`}</Furigana>
+          </p>
+          <div className="anjo-topic-grid">
+            {topics.map((topic) => (
+              <TopicCard key={topic.id} topic={topic} query={query} />
+            ))}
+          </div>
+        </section>
+      )}
       <AnjoProgress status={bill.status} note={bill.status_note} dates={bill} />
       <div className="anjo-detail-layout">
         <div>

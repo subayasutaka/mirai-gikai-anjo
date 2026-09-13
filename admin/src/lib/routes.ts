@@ -8,6 +8,9 @@
 
 // ── 静的ルート ──────────────────────────────────────
 export const routes = {
+  topics: () => "/contents" as const,
+  topicNew: () => "/contents/new" as const,
+  topicEdit: (id: string) => `/contents/${id}/edit` as const,
   pilot: () => "/pilot" as const,
   login: () => "/login" as const,
   bills: () => "/bills" as const,

@@ -58,7 +58,9 @@ const OVERRIDES: Record<string, string> = {
   未満の方: "みまんのかた",
 };
 const overridePattern = new RegExp(
-  `(\\d{1,2}月(?:\\d{1,2}日(?:（[日月火水木金土]）)?)?|${Object.keys(OVERRIDES)
+  `(\\d{1,2}月(?:分|\\d{1,2}日(?:（[日月火水木金土]）)?)?|${Object.keys(
+    OVERRIDES
+  )
     .sort((a, b) => b.length - a.length)
     .join("|")})`,
   "g"
@@ -73,7 +75,7 @@ export function readingSegments(
     .filter(Boolean)
     .flatMap((part) => {
       const date = part.match(
-        /^(\d{1,2})月(?:(\d{1,2})日(?:（([日月火水木金土])）)?)?$/
+        /^(\d{1,2})月(?:(\d{1,2})日(?:（([日月火水木金土])）)?|(分))?$/
       );
       if (date) {
         const months = [
@@ -129,7 +131,7 @@ export function readingSegments(
           const segments: ReadingSegment[] = [
             {
               text: weekday ? part.slice(0, -3) : part,
-              reading: month + dayReading,
+              reading: month + dayReading + (date[4] ? "ぶん" : ""),
             },
           ];
           if (weekday) {

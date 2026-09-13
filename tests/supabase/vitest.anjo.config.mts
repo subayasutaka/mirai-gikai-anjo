@@ -8,6 +8,7 @@ export default defineConfig({
   test: {
     ...base.test,
     include: [
+      "db-function/save-anjo-topic.test.ts",
       "db-function/reserve-anjo-ai-request.test.ts",
       "db-function/save-anjo-bill-contents.test.ts",
       "db-function/is-admin.test.ts",

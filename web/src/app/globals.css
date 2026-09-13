@@ -1340,3 +1340,209 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* Citizen-first navigation: one explanation, several ways to find it. */
+.anjo-browse-heading {
+  padding: 30px 0 20px;
+}
+.anjo-browse-heading h1 {
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin: 6px 0 12px;
+}
+.anjo-view-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-anjo-border);
+  margin-bottom: 24px;
+}
+.anjo-view-tabs a {
+  padding: 12px 22px;
+  border-radius: 12px 12px 0 0;
+  font-weight: 700;
+}
+.anjo-view-tabs a[aria-current],
+.anjo-filter a[aria-current] {
+  background: var(--color-anjo-navy);
+  color: var(--color-anjo-white);
+}
+.anjo-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+.anjo-filter a {
+  padding: 5px 14px;
+  background: var(--color-anjo-white);
+  border: 1px solid var(--color-anjo-border);
+  border-radius: 24px;
+  font-weight: 600;
+}
+.anjo-theme-filter a {
+  background: var(--color-anjo-light);
+}
+.anjo-browse-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 28px 0 14px;
+}
+.anjo-topic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 16px 0 26px;
+}
+.anjo-topic-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--color-anjo-border);
+  border-radius: 18px;
+  background: var(--color-anjo-white);
+  overflow-wrap: anywhere;
+}
+.anjo-topic-card:hover {
+  border-color: var(--color-anjo-green);
+  box-shadow: 0 6px 20px var(--color-anjo-shadow);
+}
+.anjo-topic-card h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.65;
+}
+.anjo-topic-card .anjo-chip {
+  align-self: flex-start;
+}
+.anjo-topic-money {
+  margin-top: auto;
+  padding: 14px 16px;
+  background: var(--color-anjo-paper);
+  border-radius: 12px;
+}
+.anjo-topic-money > span {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-anjo-muted);
+}
+.anjo-topic-money strong {
+  font-size: 1.25rem;
+}
+.anjo-topic-read {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-anjo-navy);
+  font-weight: 700;
+}
+.anjo-browse-source {
+  margin: 32px 0;
+}
+.anjo-content-page {
+  max-width: 900px;
+  margin: 24px auto;
+  overflow-wrap: anywhere;
+}
+.anjo-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.anjo-facts-grid > div {
+  padding: 22px;
+  border-radius: 16px;
+  background: var(--color-anjo-white);
+  border: 1px solid var(--color-anjo-border);
+}
+.anjo-facts-grid dt {
+  color: var(--color-anjo-muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.anjo-facts-grid dd {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.anjo-facts-grid .anjo-fact-money {
+  grid-column: 1 / -1;
+  background: var(--color-anjo-light);
+}
+.anjo-fact-money dd {
+  font-size: 1.6rem;
+}
+.anjo-disclosure {
+  margin: 16px 0;
+  padding: 0 22px;
+  border: 1px solid var(--color-anjo-border);
+  border-radius: 16px;
+  background: var(--color-anjo-white);
+}
+.anjo-disclosure summary {
+  cursor: pointer;
+  padding: 20px 0;
+  font-weight: 800;
+}
+.anjo-disclosure[open] {
+  padding-bottom: 22px;
+}
+.anjo-disclosure h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 18px 0 10px;
+}
+.anjo-disclosure .anjo-chat {
+  box-shadow: none;
+  padding: 12px 0 0;
+  border: 0;
+}
+.anjo-content-timeline {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.anjo-content-timeline li {
+  border-left: 3px solid var(--color-anjo-lime);
+  padding: 10px 12px;
+  background: var(--color-anjo-paper);
+}
+.anjo-content-timeline strong {
+  display: block;
+}
+.anjo-content-bills {
+  margin: 28px 0;
+}
+.anjo-content-bills h2 {
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+.anjo-bill-reference {
+  display: block;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-anjo-border);
+  font-weight: 600;
+}
+.anjo-related-topic {
+  margin: 16px 0;
+}
+@media (max-width: 620px) {
+  .anjo-topic-grid,
+  .anjo-facts-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .anjo-topic-card {
+    padding: 20px;
+  }
+  .anjo-view-tabs a {
+    padding: 10px 12px;
+  }
+  .anjo-disclosure {
+    padding-inline: 16px;
+  }
+  .anjo-fact-money dd {
+    font-size: 1.3rem;
+  }
+}
