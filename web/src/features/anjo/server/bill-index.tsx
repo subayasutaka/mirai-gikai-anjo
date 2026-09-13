@@ -9,6 +9,11 @@ import {
   readTopicSearch,
   topicQuery,
 } from "../shared/topic-navigation";
+import {
+  filterBudgetTopics,
+  getTopicBillIds,
+} from "../shared/utils/filter-budget-topics";
+import { BrowseFilters } from "./browse-filters";
 import { Furigana } from "./furigana";
 import { listAnjoBills } from "./repository";
 import { TopicCard } from "./topic-card";
@@ -37,18 +42,15 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
   const topics = allTopics.filter(
     (t) => !session || t.diet_session_id === session[0]
   );
-  const expandedBills = new Set(
-    topics.flatMap((t) => t.anjo_topic_bills.map((link) => link.bill_id))
-  );
+  const expandedBills = getTopicBillIds(topics);
   const themes = [...new Set(topics.flatMap((t) => t.content.themes))];
-  const shown = topics.filter(
-    (t) =>
-      (!state.category ||
-        t.content.categories.includes(
-          state.category as (typeof TOPIC_CATEGORIES)[number]
-        )) &&
-      (!state.theme || t.content.themes.includes(state.theme))
-  );
+  const shown = filterBudgetTopics(topics, state);
+  const hasFilters = Boolean(state.category || state.theme);
+  const matchedBillIds = getTopicBillIds(shown);
+  const shownBills = hasFilters
+    ? bills.filter((b) => matchedBillIds.has(b.id))
+    : bills;
+  const filterDescription = `${state.theme || "すべてのテーマ"} ／ ${state.category || "すべての分野"}`;
   const query = topicQuery(state);
   const to = (change: Partial<typeof state>) => ({
     pathname: routes.home(),
@@ -88,57 +90,33 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
       <nav className="anjo-view-tabs" aria-label="探し方を選ぶ">
         <Link
           href={to({ view: "life" })}
+          scroll={false}
           aria-current={state.view === "life" ? "page" : undefined}
         >
           <Furigana>暮らしから見る</Furigana>
         </Link>
         <Link
           href={to({ view: "bills" })}
+          scroll={false}
           aria-current={state.view === "bills" ? "page" : undefined}
         >
-          <Furigana>{`議案から見る（${bills.length}件）`}</Furigana>
+          <Furigana>議案から見る</Furigana>
         </Link>
       </nav>
+      <BrowseFilters
+        state={state}
+        themes={themes}
+        categories={TOPIC_CATEGORIES.filter((category) =>
+          topics.some((topic) => topic.content.categories.includes(category))
+        )}
+      />
       {state.view === "life" ? (
         <section aria-labelledby="contents-title">
           <h2 id="contents-title" className="anjo-browse-title">
             <Furigana>予算の中で変わること</Furigana>
           </h2>
-          <nav className="anjo-filter" aria-label="分野で絞り込む">
-            <Link
-              href={to({ category: "" })}
-              aria-current={!state.category ? "page" : undefined}
-            >
-              <Furigana>すべての分野</Furigana>
-            </Link>
-            {TOPIC_CATEGORIES.filter((c) =>
-              topics.some((t) => t.content.categories.includes(c))
-            ).map((c) => (
-              <Link
-                key={c}
-                href={to({ category: c })}
-                aria-current={state.category === c ? "page" : undefined}
-              >
-                <Furigana>{c}</Furigana>
-              </Link>
-            ))}
-          </nav>
-          <nav
-            className="anjo-filter anjo-theme-filter"
-            aria-label="テーマで絞り込む"
-          >
-            {themes.map((theme) => (
-              <Link
-                key={theme}
-                href={to({ theme: state.theme === theme ? "" : theme })}
-                aria-current={state.theme === theme ? "page" : undefined}
-              >
-                <Furigana>{`${theme} ${topics.filter((t) => t.content.themes.includes(theme)).length}件${state.theme === theme ? "・解除" : ""}`}</Furigana>
-              </Link>
-            ))}
-          </nav>
-          <p className="anjo-small" role="status">
-            <Furigana>{`${state.category || "すべての分野"}${state.theme ? ` × ${state.theme}` : ""}：${shown.length}内容。資料の掲載順を基本に表示。`}</Furigana>
+          <p className="anjo-filter-result" role="status">
+            <Furigana>{`${filterDescription}：${shown.length}件の内容`}</Furigana>
           </p>
           {shown.length ? (
             <div className="anjo-topic-grid">
@@ -157,21 +135,20 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
               </Link>
             </p>
           )}
-          <h2 className="anjo-browse-title">
-            <Furigana>条例や、そのほかの議案</Furigana>
-          </h2>
-          <div className="anjo-topic-grid">
-            {bills
-              .filter((b) => !expandedBills.has(b.id))
-              .map((b) => (
-                <BillCard key={b.id} bill={b} query={query} />
-              ))}
-          </div>
-          <p className="anjo-small">
-            <Furigana>
-              分野・テーマの絞り込みは、上の「予算の中で変わること」が対象です。
-            </Furigana>
-          </p>
+          {!hasFilters && (
+            <>
+              <h2 className="anjo-browse-title">
+                <Furigana>条例や、そのほかの議案</Furigana>
+              </h2>
+              <div className="anjo-topic-grid">
+                {bills
+                  .filter((b) => !expandedBills.has(b.id))
+                  .map((b) => (
+                    <BillCard key={b.id} bill={b} query={query} />
+                  ))}
+              </div>
+            </>
+          )}
         </section>
       ) : (
         <section aria-labelledby="bills-title">
@@ -183,11 +160,44 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
               一つの予算議案に、複数の内容が含まれます。同じ内容が二つの会計にまたがる場合もあります。
             </Furigana>
           </p>
-          <div className="anjo-topic-grid">
-            {bills.map((b) => (
-              <BillCard key={b.id} bill={b} query={query} />
-            ))}
-          </div>
+          <p className="anjo-filter-result" role="status">
+            <Furigana>{`${filterDescription}：${shownBills.length}件の議案`}</Furigana>
+          </p>
+          {hasFilters && (
+            <p className="anjo-small">
+              <Furigana>
+                選んだ内容を含む議案を表示しています。議案全体には、ほかの内容も含まれます。
+              </Furigana>
+            </p>
+          )}
+          {shownBills.length ? (
+            <div className="anjo-topic-grid">
+              {shownBills.map((b) => (
+                <BillCard
+                  key={b.id}
+                  bill={b}
+                  query={query}
+                  matchedTopics={
+                    hasFilters
+                      ? shown
+                          .filter((t) =>
+                            t.anjo_topic_bills.some(
+                              (link) => link.bill_id === b.id
+                            )
+                          )
+                          .map((t) => ({ id: t.id, title: t.content.title }))
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="anjo-panel">
+              <Furigana>
+                この条件に合う議案はありません。テーマか分野の「すべて」を選ぶと条件を外せます。
+              </Furigana>
+            </p>
+          )}
         </section>
       )}
       <p className="anjo-browse-source">
@@ -208,9 +218,11 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
 function BillCard({
   bill,
   query,
+  matchedTopics,
 }: {
   bill: Awaited<ReturnType<typeof listAnjoBills>>[number];
   query: string;
+  matchedTopics?: { id: string; title: string }[];
 }) {
   return (
     <Link
@@ -237,6 +249,20 @@ function BillCard({
           </div>
         );
       })}
+      {matchedTopics && (
+        <div className="anjo-bill-matches">
+          <p>
+            <Furigana>この条件に合う内容</Furigana>
+          </p>
+          <ul>
+            {matchedTopics.map((topic) => (
+              <li key={topic.id}>
+                <Furigana>{topic.title}</Furigana>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <span className="anjo-chip">
         <Furigana>{ANJO_STATUS_LABELS[bill.status]}</Furigana>
       </span>

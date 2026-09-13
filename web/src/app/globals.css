@@ -1381,8 +1381,69 @@ button {
   border-radius: 24px;
   font-weight: 600;
 }
-.anjo-theme-filter a {
+.anjo-browse-filters {
+  padding: 18px 20px;
+  border: 1px solid var(--color-anjo-border);
+  border-radius: 16px;
+  background: var(--color-anjo-white);
+}
+.anjo-filter-heading,
+.anjo-filter-heading h2 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.anjo-filter-heading {
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.anjo-filter-heading h2 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.anjo-filter-row {
+  display: grid;
+  grid-template-columns: 4em minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  margin-top: 8px;
+}
+.anjo-filter-label {
+  padding-block: 10px;
+  font-weight: 600;
+}
+.anjo-filter-row .anjo-filter {
+  margin: 0;
+}
+.anjo-filter-row .anjo-filter a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+.anjo-filter-row .anjo-filter a[aria-current] {
   background: var(--color-anjo-light);
+  border-color: var(--color-anjo-green);
+  color: var(--color-anjo-navy);
+}
+.anjo-filter-result {
+  margin-block: 12px;
+  font-weight: 600;
+}
+.anjo-bill-matches {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--color-anjo-light);
+  font-size: 0.9rem;
+}
+.anjo-bill-matches p {
+  font-weight: 700;
+}
+.anjo-bill-matches ul {
+  list-style: disc;
+  padding-left: 20px;
 }
 .anjo-browse-title {
   font-size: 1.4rem;
@@ -1529,6 +1590,16 @@ button {
   margin: 16px 0;
 }
 @media (max-width: 620px) {
+  .anjo-browse-filters {
+    padding: 14px;
+  }
+  .anjo-filter-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .anjo-filter-label {
+    padding-block: 2px;
+  }
   .anjo-topic-grid,
   .anjo-facts-grid {
     grid-template-columns: minmax(0, 1fr);
