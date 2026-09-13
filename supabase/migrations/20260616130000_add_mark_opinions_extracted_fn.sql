@@ -15,3 +15,17 @@ $$;
 
 COMMENT ON FUNCTION mark_opinions_extracted(UUID[], TIMESTAMPTZ) IS
   '指定意見群の topic_extracted_at を単一トランザクションで一括更新する（増分トピック分析の抽出済み記録）';
+
+-- Anjo pilot: deny direct API execution of the functions defined above.
+-- Preserve access only for trusted server-side service_role calls.
+DO $anjo$
+DECLARE target regprocedure;
+BEGIN
+  FOR target IN SELECT p.oid::regprocedure FROM pg_proc p
+    JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND p.proname IN ('mark_opinions_extracted')
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated', target);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO service_role', target);
+  END LOOP;
+END $anjo$;

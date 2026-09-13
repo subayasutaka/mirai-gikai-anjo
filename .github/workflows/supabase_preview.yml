@@ -22,6 +22,7 @@ jobs:
     # "Failed to provision branch project"（409/500）で失敗する。仮に成功しても
     # Vercel の develop 向け環境変数（= staging）を preview DB に向け替えてしまう
     if: >-
+      vars.ANJO_ENABLE_PAID_PREVIEW_DB == 'true' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.head.ref != 'develop'
     environment: staging

@@ -7,8 +7,6 @@ import { BillTagsForm } from "@/features/bills-edit/client/components/bill-tags-
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { getBillTagIds } from "@/features/bills-edit/server/loaders/get-bill-tag-ids";
 import { loadDietSessions } from "@/features/diet-sessions/server/loaders/load-diet-sessions";
-import { StanceForm } from "@/features/mirai-stance/client/components/stance-form";
-import { getStanceByBillId } from "@/features/mirai-stance/server/loaders/get-stance-by-bill-id";
 import { loadTags } from "@/features/tags/server/loaders/load-tags";
 
 interface BillEditPageProps {
@@ -19,14 +17,12 @@ interface BillEditPageProps {
 
 export default async function BillEditPage({ params }: BillEditPageProps) {
   const { id } = await params;
-  const [bill, stance, allTags, selectedTagIds, dietSessions] =
-    await Promise.all([
-      getBillById(id),
-      getStanceByBillId(id),
-      loadTags(),
-      getBillTagIds(id),
-      loadDietSessions(),
-    ]);
+  const [bill, allTags, selectedTagIds, dietSessions] = await Promise.all([
+    getBillById(id),
+    loadTags(),
+    getBillTagIds(id),
+    loadDietSessions(),
+  ]);
 
   if (!bill) {
     notFound();
@@ -47,11 +43,19 @@ export default async function BillEditPage({ params }: BillEditPageProps) {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">議案編集</h1>
         <p className="text-gray-600 mt-1">議案の基本情報を編集します</p>
+        <Link
+          href={routes.billContentsEdit(id)}
+          className="inline-block mt-3 text-blue-600 underline"
+        >
+          やさしい説明・詳しい説明を編集する
+        </Link>
       </div>
 
       <div className="space-y-6">
         <BillEditForm bill={bill} dietSessions={dietSessions} />
-        <StanceForm billId={bill.id} stance={stance} billStatus={bill.status} />
+        <p className="text-sm text-gray-600">
+          すば康貴の賛否・政治的見解は未掲載です。
+        </p>
         <BillTagsForm
           billId={bill.id}
           allTags={allTags}
