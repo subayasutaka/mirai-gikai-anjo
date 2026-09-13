@@ -5,6 +5,7 @@ import {
   countAnjoDocuments,
   getAnjoDocumentKind,
   getAnjoDocumentStatus,
+  isAnjoSubmissionPlanned,
 } from "@mirai-gikai/shared/anjo/document-kind";
 import { TOPIC_CATEGORIES } from "@mirai-gikai/shared/anjo/topics";
 import { ArrowUpRight } from "lucide-react";
@@ -57,6 +58,9 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
     ? bills.filter((b) => matchedBillIds.has(b.id))
     : bills;
   const counts = countAnjoDocuments(bills);
+  const plannedCount = bills.filter((bill) =>
+    isAnjoSubmissionPlanned(bill.name, bill.status)
+  ).length;
   const filterDescription = `${state.theme || "すべてのテーマ"} ／ ${state.category || "すべての分野"}`;
   const query = topicQuery(state);
   const to = (change: Partial<typeof state>) => ({
@@ -74,11 +78,11 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
         </h1>
         <p>
           <Furigana>
-            公開された議案・決算・報告を、やさしい言葉で。気になる内容から読めます。
+            公表された議案・決算・人事案・報告を、やさしい言葉で。気になる内容から読めます。
           </Furigana>
         </p>
         <p className="anjo-small">
-          <Furigana>{`掲載済み ${bills.length}件（議案${counts.bill}件・決算認定${counts.certification}件・報告${counts.report}件）。予算の${topics.length}内容を個別に説明しています。予算・決算の事業別説明は一部を掲載しています。`}</Furigana>
+          <Furigana>{`掲載済み ${bills.length}件（議案${counts.bill}件・決算認定${counts.certification}件・人事の同意${counts.consent}件・報告${counts.report}件）。${plannedCount ? `うち${plannedCount}件は提出予定です。` : ""}予算の${topics.length}内容を個別に説明しています。予算・決算の事業別説明は一部を掲載しています。`}</Furigana>
         </p>
       </header>
       {sessions.length > 1 && (
@@ -152,11 +156,11 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
       ) : (
         <section aria-labelledby="bills-title">
           <h2 id="bills-title" className="anjo-browse-title">
-            <Furigana>提出された案件から見る</Furigana>
+            <Furigana>議案・案件の一覧</Furigana>
           </h2>
           <p>
             <Furigana>
-              議案、決算認定、報告を分けて掲載しています。一つの予算議案に、複数の内容が含まれます。
+              議案、決算認定、人事の同意、報告を分けて掲載しています。提出予定の案件は、その予定を明示しています。
             </Furigana>
           </p>
           <p className="anjo-filter-result" role="status">
@@ -227,6 +231,13 @@ function BillGroups({
           <p className="anjo-small">
             <Furigana>
               市から議会への報告です。可決・否決を決める案件ではありません。
+            </Furigana>
+          </p>
+        )}
+        {kind === "consent" && (
+          <p className="anjo-small">
+            <Furigana>
+              委員の選任・任命について、議会の同意を求める案件です。
             </Furigana>
           </p>
         )}

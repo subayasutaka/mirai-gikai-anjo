@@ -28,6 +28,38 @@ export function AnjoProgress({
   documentName?: string;
 }) {
   const kind = getAnjoDocumentKind(documentName);
+  if (kind === "consent") {
+    const current = getAnjoProgressIndex(status);
+    return (
+      <section className="anjo-progress" aria-label="人事の同意案の状況">
+        <h2>
+          <Furigana>この人事案の状況</Furigana>
+        </h2>
+        <p>
+          <Furigana>{getAnjoDocumentStatus(documentName, status)}</Furigana>
+        </p>
+        <p>
+          <Furigana>
+            委員の選任・任命について、議会の同意を求める案件です。
+          </Furigana>
+        </p>
+        {ANJO_PROGRESS_STEPS.map((step, index) => {
+          const date = formatProgressDate(dates[step.dateField]);
+          if (!date) return null;
+          return (
+            <p key={step.dateField}>
+              <Furigana>{`${index === 0 ? "提出" : step.label}${index > current ? "予定" : ""}：${date}`}</Furigana>
+            </p>
+          );
+        })}
+        {note && (
+          <p className="anjo-progress-note">
+            <Furigana>{note}</Furigana>
+          </p>
+        )}
+      </section>
+    );
+  }
   if (kind === "report") {
     const dateLabel = formatProgressDate(dates.introduction_date);
     return (

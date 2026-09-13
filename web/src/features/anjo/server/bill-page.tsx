@@ -1,4 +1,5 @@
 import "server-only";
+import { isAnjoSubmissionPlanned } from "@mirai-gikai/shared/anjo/document-kind";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -30,6 +31,10 @@ export async function AnjoBillPage({
 }) {
   const bill = await getAnjoBill(id, token);
   if (!bill) notFound();
+  const submissionPlanned = isAnjoSubmissionPlanned(bill.name, bill.status);
+  const submissionDate = submissionPlanned
+    ? bill.introduction_date
+    : bill.submitted_date;
   const topics = (await listAnjoTopics()).filter((t) =>
     t.anjo_topic_bills.some((link) => link.bill_id === id)
   );
@@ -66,9 +71,9 @@ export async function AnjoBillPage({
           <Furigana>{bill.name}</Furigana>
         </p>
         <p className="anjo-small">
-          <Furigana>{"提出日："}</Furigana>
-          {bill.submitted_date ? (
-            formatDateWithDots(bill.submitted_date)
+          <Furigana>{submissionPlanned ? "提出予定日：" : "提出日："}</Furigana>
+          {submissionDate ? (
+            formatDateWithDots(submissionDate)
           ) : (
             <Furigana>未登録</Furigana>
           )}{" "}

@@ -12,6 +12,15 @@ it("報告の誤登録された採決日をAIへ渡さず、決算認定の用�
   expect(certification).not.toContain("原案可決");
 });
 
+it("人事案を関連づけても提出予定を上程済みとしてAIへ渡さない", () => {
+  const note = topicStatusNote([{ name: "同意第6号", status: "preparing", status_note: "候補者未公表", introduction_date: "2026-09-15", plenary_question_date: "2026-09-15", committee_question_date: null, vote_date: "2026-09-15" }]);
+  expect(note).toContain("登録状態：提出予定");
+  expect(note).toContain("提出予定：2026-09-15");
+  expect(note).toContain("採決日：2026-09-15（予定・結果未確認）");
+  expect(note).toContain("議案質疑：2026-09-15（予定）");
+  expect(note).not.toContain("上程：");
+});
+
 const content = {
   ...EMPTY_TOPIC_CONTENT, title: "財源の変更", formalTitle: "財源更正", summary: "支出は増減なし", description: "同じ額の一般財源を減らす。",
   target: "事業の財源", period: "2026年度", moneyLabel: "支出の増減", moneyValue: "0円", importantNote: "サービスを追加する意味ではない。",

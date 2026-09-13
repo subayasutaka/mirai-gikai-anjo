@@ -49,6 +49,22 @@ describe("安城AIの入力・費用制限", () => {
     expect(estimateAnjoCost(1000, 500)).toBeCloseTo(0.000395);
     expect(estimateAnjoCost(24000, 1000)).toBeLessThan(0.01);
   });
+  it("人事案の提出予定と候補者未公表を、同意済みと混同せずAIへ渡す", () => {
+    const prompt = createAnjoPrompt(
+      {
+        name: "同意第5号 固定資産評価審査委員会委員の選任について",
+        status: "preparing",
+        status_note: "9月15日に提出・採決予定。結果は未確認。",
+        knowledge_source:
+          "現職の任期満了に伴う後任の選任。候補者は公表資料に記載なし。",
+      },
+      "誰の任命が決まった？"
+    );
+    expect(prompt).toContain('"資料種別":"consent"');
+    expect(prompt).toContain('"登録状態":"提出予定"');
+    expect(prompt).toContain("候補者は公表資料に記載なし");
+    expect(prompt).not.toContain("採決・同意");
+  });
   it("報告と決算の意味を状態・参照資料と一緒に渡す", () => {
     const report = createAnjoPrompt(
       {

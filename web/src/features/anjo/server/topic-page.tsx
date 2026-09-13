@@ -2,6 +2,7 @@ import "server-only";
 import {
   getAnjoDocumentKind,
   getAnjoDocumentStatus,
+  isAnjoSubmissionPlanned,
 } from "@mirai-gikai/shared/anjo/document-kind";
 import { formatProgressDate } from "@mirai-gikai/shared/anjo/progress-dates";
 import Link from "next/link";
@@ -126,7 +127,7 @@ export async function AnjoTopicPage({
               </strong>
               {bills.map((bill) => (
                 <p key={bill.id}>
-                  <Furigana>{`${bill.name.split(" ")[0]}：${formatProgressDate(bill[step.field]) || "日付未確認"}`}</Furigana>
+                  <Furigana>{`${bill.name.split(" ")[0]}：${formatProgressDate(bill[step.field]) || "日付未確認"}${isAnjoSubmissionPlanned(bill.name, bill.status) ? "（予定）" : ""}`}</Furigana>
                 </p>
               ))}
             </li>
