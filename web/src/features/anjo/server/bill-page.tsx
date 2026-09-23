@@ -90,14 +90,19 @@ export async function AnjoBillPage({
           )}
         </p>
       </header>
-      {topics.length > 0 && (
-        <p className="anjo-panel anjo-lead">
-          <Furigana>
-            {bill.bill_contents.find((c) => c.difficulty_level === "normal")
-              ?.summary || ""}
-          </Furigana>
-        </p>
-      )}
+      {topics.length > 0 &&
+        (["normal", "hard"] as const).map((level) => (
+          <p
+            key={level}
+            data-reading-level={level}
+            className="anjo-panel anjo-lead"
+          >
+            <Furigana>
+              {bill.bill_contents.find((c) => c.difficulty_level === level)
+                ?.summary || ""}
+            </Furigana>
+          </p>
+        ))}
       {topics.length > 0 && (
         <section className="anjo-bill-topics">
           <h2 className="anjo-browse-title">

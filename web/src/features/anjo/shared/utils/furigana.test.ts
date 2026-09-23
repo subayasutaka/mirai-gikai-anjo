@@ -27,6 +27,15 @@ beforeAll(async () => {
 });
 
 describe("automatic local furigana", () => {
+  it("reads cadastral maps as こうず in new council text", () => {
+    const text = "公図・地番図を確認し、公図管理システムを更新する。";
+    const segments = readingSegments(text, (part) => tokenizer.tokenize(part));
+    expect(segments.filter((part) => part.text === "公図")).toEqual([
+      { text: "公図", reading: "こうず" },
+      { text: "公図", reading: "こうず" },
+    ]);
+    expect(segments.map((part) => part.text).join("")).toBe(text);
+  });
   it("reads monthly budget periods without treating 分から as 分かる", () => {
     const text = "10月分から12月分まで";
     const result = readingSegments(text, (part) => tokenizer.tokenize(part));

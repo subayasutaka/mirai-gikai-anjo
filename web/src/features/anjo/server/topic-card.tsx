@@ -24,8 +24,11 @@ export function TopicCard({
       <h3>
         <Furigana>{c.title}</Furigana>
       </h3>
-      <p>
+      <p data-reading-level="normal">
         <Furigana>{c.summary}</Furigana>
+      </p>
+      <p data-reading-level="hard">
+        <Furigana>{c.description}</Furigana>
       </p>
       <p className="anjo-small">
         <Furigana>{c.period}</Furigana>
