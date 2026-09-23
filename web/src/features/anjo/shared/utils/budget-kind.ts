@@ -5,7 +5,8 @@ export function getBudgetKind(
 ): "supplementary" | "initial" | null {
   if (getAnjoDocumentKind(name) !== "bill") return null;
   const normalized = name.normalize("NFKC").replace(/\s/g, "");
-  if (normalized.includes("補正予算")) return "supplementary";
+  if (/年度.+補正予算(?:\([^)]*\))?(?:について)?$/.test(normalized))
+    return "supplementary";
   if (/年度.+予算(?:\([^)]*\))?(?:について)?$/.test(normalized))
     return "initial";
   return null;
