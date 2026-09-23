@@ -76,7 +76,7 @@ try {
     const topicSelector = '.anjo-topic-card[href^="/contents/"]';
     const cards = () =>
       evaluate(
-        `Array.from(document.querySelectorAll('${topicSelector}'), el => ({href:el.getAttribute('href'),text:el.innerText}))`
+        `Array.from(document.querySelectorAll('${topicSelector}'), el => ({href:el.getAttribute('href'),text:el.innerText,title:el.querySelector('h3').innerText,explanation:Array.from(el.querySelectorAll('p[data-reading-level]')).filter(p=>p.getClientRects().length>0).map(p=>p.innerText).join('')}))`
       );
     const easyCards = cards();
     assert.ok(
@@ -89,18 +89,25 @@ try {
     easyCards.forEach((card, index) => {
       assert.equal(hardCards[index].href, card.href);
       assert.notEqual(
-        hardCards[index].text,
-        card.text,
+        hardCards[index].explanation,
+        card.explanation,
         `${card.href}: card explanation must change`
+      );
+      assert.notEqual(
+        hardCards[index].title,
+        card.title,
+        `${card.href}: card title must change`
       );
     });
     toggle();
     assert.deepEqual(cards(), easyCards);
+    changesAndRestores("#contents-title");
 
     const mapCard = easyCards.find((card) => card.text.includes("公図"));
     assert.ok(mapCard, "published content about 公図 is needed for this check");
     open(mapCard.href);
-    changesAndRestores(".anjo-detail-heading");
+    changesAndRestores(".anjo-detail-heading .anjo-lead");
+    changesAndRestores(".anjo-detail-heading h1");
     if (
       evaluate(
         `document.querySelector('${rubySwitch}').getAttribute('aria-checked')`
@@ -127,6 +134,38 @@ try {
       evaluate('document.querySelector("textarea").value'),
       "書きかけの質問"
     );
+    open("/?view=bills");
+    normal();
+    const billCards = () =>
+      evaluate(
+        `Array.from(document.querySelectorAll('[data-bill-group] a[href^="/bills/"]'),el=>({href:el.getAttribute('href'),title:Array.from(el.querySelectorAll('h3')).filter(h=>h.getClientRects().length>0).map(h=>h.innerText).join('')}))`
+      );
+    const easyBills = billCards();
+    assert.equal(
+      new Set(easyBills.map((b) => b.href)).size,
+      easyBills.length,
+      "no bill is duplicated across groups"
+    );
+    assert.ok(
+      evaluate(
+        `document.querySelectorAll('[data-bill-group="supplementary"] a[href^="/bills/"]').length`
+      ) > 0,
+      "supplementary budget bills remain visible"
+    );
+    assert.ok(
+      easyBills.every((b) => !/(否決|可決|に同意)/.test(b.title)),
+      "results do not belong in titles"
+    );
+    toggle();
+    const hardBills = billCards();
+    assert.deepEqual(
+      hardBills.map((b) => b.href),
+      easyBills.map((b) => b.href)
+    );
+    assert.ok(hardBills.every((b) => !/(否決|可決|に同意)/.test(b.title)));
+    assert.ok(visibleText("#group-supplementary")[0].includes("補正"));
+    toggle();
+    assert.deepEqual(billCards(), easyBills);
     console.log(
       `PASS ${width}px: cards, content, budget introduction, full explanation, 公図 ruby, draft question`
     );

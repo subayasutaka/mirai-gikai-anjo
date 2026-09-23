@@ -4,6 +4,7 @@ import Link from "next/link";
 import { routes } from "@/lib/routes";
 import { type readTopicSearch, topicQuery } from "../shared/topic-navigation";
 import { Furigana } from "./furigana";
+import { ReadingText } from "./reading-text";
 
 export function BrowseFilters({
   state,
@@ -20,7 +21,10 @@ export function BrowseFilters({
       <div className="anjo-filter-heading">
         <h2 id="filter-title">
           <SlidersHorizontal size={18} aria-hidden="true" />
-          <Furigana>予算の内容で絞り込む</Furigana>
+          <ReadingText
+            normal="気になる内容で絞り込む"
+            hard="掲載事業のテーマ・分野で絞り込む"
+          />
         </h2>
         {active && (
           <Link

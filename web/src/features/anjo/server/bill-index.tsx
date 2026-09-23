@@ -16,12 +16,14 @@ import {
   type TopicSearch,
   topicQuery,
 } from "../shared/topic-navigation";
+import { getBudgetKind, getTopicScope } from "../shared/utils/budget-kind";
 import {
   filterBudgetTopics,
   getTopicBillIds,
 } from "../shared/utils/filter-budget-topics";
 import { BrowseFilters } from "./browse-filters";
 import { Furigana } from "./furigana";
+import { ReadingText } from "./reading-text";
 import { listAnjoBills } from "./repository";
 import { TopicCard } from "./topic-card";
 import { listAnjoTopics } from "./topic-repository";
@@ -50,6 +52,8 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
     (t) => !session || t.diet_session_id === session[0]
   );
   const expandedBills = getTopicBillIds(topics);
+  const topicBills = bills.filter((bill) => expandedBills.has(bill.id));
+  const topicScope = getTopicScope(topicBills.map((bill) => bill.name));
   const themes = [...new Set(topics.flatMap((t) => t.content.themes))];
   const shown = filterBudgetTopics(topics, state);
   const hasFilters = Boolean(state.category || state.theme);
@@ -74,7 +78,10 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
           <Furigana>{session?.[1]?.name || "安城市議会"}</Furigana>
         </p>
         <h1>
-          <Furigana>暮らしに、どんな変化がある？</Furigana>
+          <ReadingText
+            normal="暮らしに、どんな変化がある？"
+            hard="議案・審議情報"
+          />
         </h1>
         <p>
           <Furigana>
@@ -104,14 +111,14 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
           scroll={false}
           aria-current={state.view === "life" ? "page" : undefined}
         >
-          <Furigana>暮らしから見る</Furigana>
+          <ReadingText normal="暮らしから見る" hard="事業・内容から見る" />
         </Link>
         <Link
           href={to({ view: "bills" })}
           scroll={false}
           aria-current={state.view === "bills" ? "page" : undefined}
         >
-          <Furigana>議案から見る</Furigana>
+          <ReadingText normal="議案から見る" hard="議案一覧" />
         </Link>
       </nav>
       <BrowseFilters
@@ -124,8 +131,11 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
       {state.view === "life" ? (
         <section aria-labelledby="contents-title">
           <h2 id="contents-title" className="anjo-browse-title">
-            <Furigana>予算の中で変わること</Furigana>
+            <ReadingText normal={topicScope.normal} hard={topicScope.hard} />
           </h2>
+          <p>
+            <Furigana>{`${topicScope.explanation}${topicBills.length}議案の中から${topics.length}項目を掲載しています。`}</Furigana>
+          </p>
           <p className="anjo-filter-result" role="status">
             <Furigana>{`${filterDescription}：${shown.length}件の内容`}</Furigana>
           </p>
@@ -150,17 +160,21 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
             <BillGroups
               bills={bills.filter((b) => !expandedBills.has(b.id))}
               query={query}
+              topics={topics}
             />
           )}
         </section>
       ) : (
         <section aria-labelledby="bills-title">
           <h2 id="bills-title" className="anjo-browse-title">
-            <Furigana>議案・案件の一覧</Furigana>
+            <ReadingText
+              normal="議会に出された案・報告の一覧"
+              hard="議案・案件の一覧"
+            />
           </h2>
           <p>
             <Furigana>
-              議案、決算認定、人事の同意、報告を分けて掲載しています。提出予定の案件は、その予定を明示しています。
+              予算の見直し、条例などの案、決算、委員などを選ぶ案、報告を分けて掲載しています。予算は会計ごとに1つの議案として掲載し、議案を開くと事業別の説明も読めます。
             </Furigana>
           </p>
           <p className="anjo-filter-result" role="status">
@@ -177,6 +191,7 @@ export async function AnjoBillIndex({ search = {} }: { search?: TopicSearch }) {
             <BillGroups
               bills={shownBills}
               query={query}
+              topics={topics}
               matchedTopics={hasFilters ? shown : undefined}
             />
           ) : (
@@ -207,21 +222,65 @@ function BillGroups({
   bills,
   query,
   matchedTopics,
+  topics,
 }: {
   bills: Awaited<ReturnType<typeof listAnjoBills>>;
   query: string;
   matchedTopics?: Awaited<ReturnType<typeof listAnjoTopics>>;
+  topics: Awaited<ReturnType<typeof listAnjoTopics>>;
 }) {
-  return ANJO_DOCUMENT_KINDS.map(({ kind, label }) => {
-    const group = bills.filter(
-      (bill) => getAnjoDocumentKind(bill.name) === kind
-    );
+  const labels = {
+    bill: "条例などの案",
+    certification: "昨年度のお金の使い方",
+    consent: "委員などを選ぶ案",
+    report: "市からの報告",
+  };
+  const groups = [
+    {
+      kind: "supplementary",
+      label: "補正予算",
+      normal: "決まっている予算を見直す案",
+      bills: bills.filter(
+        (bill) => getBudgetKind(bill.name) === "supplementary"
+      ),
+    },
+    {
+      kind: "initial",
+      label: "当初予算",
+      normal: "1年分のお金の使い道を決める案",
+      bills: bills.filter((bill) => getBudgetKind(bill.name) === "initial"),
+    },
+    ...ANJO_DOCUMENT_KINDS.map(({ kind, label }) => ({
+      kind,
+      label: kind === "bill" ? "条例・意見書などの議案" : label,
+      normal: labels[kind],
+      bills: bills.filter(
+        (bill) =>
+          getAnjoDocumentKind(bill.name) === kind && !getBudgetKind(bill.name)
+      ),
+    })),
+  ];
+  return groups.map(({ kind, label, normal, bills: group }) => {
     if (!group.length) return null;
     return (
-      <section key={kind} aria-label={label}>
-        <h2 className="anjo-browse-title">
-          <Furigana>{`${label}（${group.length}件）`}</Furigana>
+      <section
+        key={kind}
+        aria-labelledby={`group-${kind}`}
+        data-bill-group={kind}
+      >
+        <h2 id={`group-${kind}`} className="anjo-browse-title">
+          <ReadingText
+            normal={`${normal}（${group.length}件）`}
+            hard={`${label}（${group.length}件）`}
+          />
         </h2>
+        {kind === "supplementary" && (
+          <p className="anjo-small">
+            <Furigana>
+              決まっている予算を変更する「補正予算」です。会計ごとに、追加額や変更内容を確認できます。
+            </Furigana>
+          </p>
+        )}
         {kind === "certification" && (
           <p className="anjo-small">
             <Furigana>昨年度のお金の使い方や経営実績を確認します。</Furigana>
@@ -247,13 +306,24 @@ function BillGroups({
               key={bill.id}
               bill={bill}
               query={query}
+              topicCount={
+                topics.filter((topic) =>
+                  topic.anjo_topic_bills.some(
+                    (link) => link.bill_id === bill.id
+                  )
+                ).length
+              }
               matchedTopics={matchedTopics
                 ?.filter((topic) =>
                   topic.anjo_topic_bills.some(
                     (link) => link.bill_id === bill.id
                   )
                 )
-                .map((topic) => ({ id: topic.id, title: topic.content.title }))}
+                .map((topic) => ({
+                  id: topic.id,
+                  title: topic.content.title,
+                  formalTitle: topic.content.formalTitle,
+                }))}
             />
           ))}
         </div>
@@ -266,10 +336,12 @@ function BillCard({
   bill,
   query,
   matchedTopics,
+  topicCount,
 }: {
   bill: Awaited<ReturnType<typeof listAnjoBills>>[number];
   query: string;
-  matchedTopics?: { id: string; title: string }[];
+  matchedTopics?: { id: string; title: string; formalTitle: string }[];
+  topicCount: number;
 }) {
   return (
     <Link
@@ -296,6 +368,15 @@ function BillCard({
           </div>
         );
       })}
+      {getBudgetKind(bill.name) && (
+        <p className="anjo-small">
+          <Furigana>
+            {topicCount
+              ? `議案を開くと、中の${topicCount}項目の説明も読めます（一部抜粋）。`
+              : "事業別の説明は準備中です。議案全体の説明を読めます。"}
+          </Furigana>
+        </p>
+      )}
       {matchedTopics && (
         <div className="anjo-bill-matches">
           <p>
@@ -304,7 +385,7 @@ function BillCard({
           <ul>
             {matchedTopics.map((topic) => (
               <li key={topic.id}>
-                <Furigana>{topic.title}</Furigana>
+                <ReadingText normal={topic.title} hard={topic.formalTitle} />
               </li>
             ))}
           </ul>

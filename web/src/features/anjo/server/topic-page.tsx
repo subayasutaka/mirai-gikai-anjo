@@ -16,6 +16,7 @@ import {
   topicQuery,
 } from "../shared/topic-navigation";
 import { AnjoMarkdown, Furigana } from "./furigana";
+import { ReadingText } from "./reading-text";
 import { TopicCard } from "./topic-card";
 import { listAnjoTopics } from "./topic-repository";
 
@@ -51,7 +52,7 @@ export async function AnjoTopicPage({
           <Furigana>{c.categories.join("・")}</Furigana>
         </p>
         <h1>
-          <Furigana>{c.title}</Furigana>
+          <ReadingText normal={c.title} hard={c.formalTitle} />
         </h1>
         <p data-reading-level="normal" className="anjo-lead">
           <Furigana>{c.summary}</Furigana>
@@ -66,7 +67,7 @@ export async function AnjoTopicPage({
       <dl className="anjo-facts-grid">
         <div>
           <dt>
-            <Furigana>誰・何が対象？</Furigana>
+            <ReadingText normal="誰・何が対象？" hard="対象者・対象施設" />
           </dt>
           <dd>
             <Furigana>{c.target}</Furigana>
@@ -74,7 +75,7 @@ export async function AnjoTopicPage({
         </div>
         <div>
           <dt>
-            <Furigana>いつの話？</Furigana>
+            <ReadingText normal="いつの話？" hard="対象期間・実施時期" />
           </dt>
           <dd>
             <Furigana>{c.period}</Furigana>
@@ -104,7 +105,10 @@ export async function AnjoTopicPage({
       </p>
       <details className="anjo-disclosure">
         <summary>
-          <Furigana>お金の内訳・財源を見る</Furigana>
+          <ReadingText
+            normal="お金の内訳・出どころを見る"
+            hard="予算内訳・財源"
+          />
         </summary>
         <div className="anjo-markdown">
           <AnjoMarkdown>{c.moneyDetails}</AnjoMarkdown>
@@ -112,7 +116,10 @@ export async function AnjoTopicPage({
       </details>
       <details className="anjo-disclosure">
         <summary>
-          <Furigana>議案の進み方・質問と答弁</Furigana>
+          <ReadingText
+            normal="議会での話し合い・質問と回答"
+            hard="審議経過・質疑と答弁"
+          />
         </summary>
         <ol className="anjo-content-timeline">
           {(
@@ -169,7 +176,7 @@ export async function AnjoTopicPage({
           </p>
         ))}
         <h2>
-          <Furigana>質問と市の答弁</Furigana>
+          <ReadingText normal="議員の質問と市の回答" hard="質疑・答弁の概要" />
         </h2>
         <div className="anjo-markdown">
           <AnjoMarkdown>
@@ -183,7 +190,10 @@ export async function AnjoTopicPage({
           <Furigana>この内容をAIに聞く</Furigana>
         </summary>
         <p>
-          <Furigana>{`質問の対象：${topic.diet_sessions?.name}／${c.title}`}</Furigana>
+          <ReadingText
+            normal={`質問の対象：${topic.diet_sessions?.name}／${c.title}`}
+            hard={`質問の対象：${topic.diet_sessions?.name}／${c.formalTitle}`}
+          />
         </p>
         <AnjoChat
           billId={primary.id}
@@ -193,7 +203,7 @@ export async function AnjoTopicPage({
       </details>
       <section className="anjo-content-bills">
         <h2>
-          <Furigana>この内容が入っている議案</Furigana>
+          <ReadingText normal="この内容が入っている議案" hard="関連する議案" />
         </h2>
         <p>
           <Furigana>会計全体の金額と、ほかの内容を確認できます。</Furigana>
@@ -210,7 +220,10 @@ export async function AnjoTopicPage({
       </section>
       <details className="anjo-disclosure">
         <summary>
-          <Furigana>原資料と確認した範囲</Furigana>
+          <ReadingText
+            normal="もとになった資料・確認できたこと"
+            hard="出典・確認範囲"
+          />
         </summary>
         <p>
           <Furigana>{c.formalTitle}</Furigana>
@@ -237,7 +250,7 @@ export async function AnjoTopicPage({
       {c.relatedTopics.some((r) => all.some((t) => t.id === r.id)) && (
         <section>
           <h2 className="anjo-browse-title">
-            <Furigana>関連する内容</Furigana>
+            <ReadingText normal="関連する内容" hard="関連事業・類似案件" />
           </h2>
           {c.relatedTopics.map((relation) => {
             const related = all.find((t) => t.id === relation.id);

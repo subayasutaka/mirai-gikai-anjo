@@ -14,6 +14,7 @@ import {
 } from "../shared/topic-navigation";
 import { AnjoMarkdown, Furigana } from "./furigana";
 import { AnjoProgress } from "./progress";
+import { ReadingText } from "./reading-text";
 import { getAnjoBill } from "./repository";
 import { TopicCard } from "./topic-card";
 import { listAnjoTopics } from "./topic-repository";
@@ -106,7 +107,10 @@ export async function AnjoBillPage({
       {topics.length > 0 && (
         <section className="anjo-bill-topics">
           <h2 className="anjo-browse-title">
-            <Furigana>この議案に含まれる内容</Furigana>
+            <ReadingText
+              normal="この議案に含まれる内容"
+              hard="事業・予算項目の内訳"
+            />
           </h2>
           <p className="anjo-small">
             <Furigana>{`${topics.length}内容を個別に説明しています。一部抜粋のため、カードの金額を足して議案全体の総額にはしないでください。`}</Furigana>
@@ -169,7 +173,10 @@ export async function AnjoBillPage({
           })}
           <section className="anjo-panel">
             <h2>
-              <Furigana>出典と説明の立場</Furigana>
+              <ReadingText
+                normal="もとになった資料と説明について"
+                hard="出典と説明の立場"
+              />
             </h2>
             {bill.shugiin_url && (
               <a

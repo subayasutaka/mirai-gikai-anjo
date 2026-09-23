@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
 import { Furigana } from "./furigana";
+import { ReadingText } from "./reading-text";
 import type { AnjoTopic } from "./topic-repository";
 
 export function TopicCard({
@@ -22,7 +23,7 @@ export function TopicCard({
         <Furigana>{c.categories.join("・")}</Furigana>
       </p>
       <h3>
-        <Furigana>{c.title}</Furigana>
+        <ReadingText normal={c.title} hard={c.formalTitle} />
       </h3>
       <p data-reading-level="normal">
         <Furigana>{c.summary}</Furigana>

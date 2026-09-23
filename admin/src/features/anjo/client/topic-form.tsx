@@ -21,8 +21,16 @@ const TEXT_FIELDS: {
   help?: string;
   long?: boolean;
 }[] = [
-  { key: "title", label: "読みやすい題名" },
-  { key: "formalTitle", label: "資料上の正式名称" },
+  {
+    key: "title",
+    label: "かんたんな題名",
+    help: "専門用語を避け、何をする案かを書きます。否決・同意などの議決結果は題名に入れません。",
+  },
+  {
+    key: "formalTitle",
+    label: "くわしい題名（資料上の正式名称）",
+    help: "閲覧画面で「くわしく」に切り替えたときに、題名として表示されます。",
+  },
   {
     key: "summary",
     label: "かんたんな説明・一覧の要約",

@@ -13,6 +13,7 @@ import {
 } from "@mirai-gikai/shared/anjo/progress-dates";
 import { Check, MapPin } from "lucide-react";
 import { Furigana } from "./furigana";
+import { ReadingText } from "./reading-text";
 
 export function AnjoProgress({
   status,
@@ -33,7 +34,10 @@ export function AnjoProgress({
     return (
       <section className="anjo-progress" aria-label="人事の同意案の状況">
         <h2>
-          <Furigana>この人事案の状況</Furigana>
+          <ReadingText
+            normal="委員を選ぶ案はどうなった？"
+            hard="人事同意案の審議・議決結果"
+          />
         </h2>
         <p>
           <Furigana>{getAnjoDocumentStatus(documentName, status)}</Furigana>
@@ -65,7 +69,7 @@ export function AnjoProgress({
     return (
       <section className="anjo-progress" aria-label="報告の位置づけ">
         <h2>
-          <Furigana>この報告について</Furigana>
+          <ReadingText normal="この報告について" hard="報告案件の位置づけ" />
         </h2>
         <p>
           <Furigana>
@@ -103,7 +107,10 @@ export function AnjoProgress({
             <Furigana>{"議会のいま"}</Furigana>
           </p>
           <h2>
-            <Furigana>{sessionName || "この議案の進み方"}</Furigana>
+            <ReadingText
+              normal={sessionName || "この議案の進み方"}
+              hard={sessionName || "審議経過・議決結果"}
+            />
           </h2>
         </div>
         <span className="anjo-current-label">
