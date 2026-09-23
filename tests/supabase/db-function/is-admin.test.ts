@@ -42,10 +42,23 @@ describe("is_admin() 関数", () => {
     expect(data).toBe(false);
   });
 
-  it("anon クライアントでは false を返す", async () => {
+  it("anon クライアントからは実行できない", async () => {
     const client = getAnonClient();
     const { data, error } = await client.rpc("is_admin");
-    expect(error).toBeNull();
-    expect(data).toBe(false);
+    expect(error).not.toBeNull();
+    expect(data).toBeNull();
+  });
+
+  it("メールでログインできても一般の新規登録は許可しない", async () => {
+    const client = getAnonClient();
+    const { data, error } = await client.auth.signUp({
+      email: `blocked-signup-${crypto.randomUUID()}@example.com`,
+      password: "test-password-123",
+    });
+    // 設定が退行した場合も、このテスト自身が作ったユーザーだけを片付ける。
+    if (data.user) await cleanupTestUser(data.user.id);
+    expect(error?.code).toBe("signup_disabled");
+    expect(data.user).toBeNull();
+    expect(data.session).toBeNull();
   });
 });
