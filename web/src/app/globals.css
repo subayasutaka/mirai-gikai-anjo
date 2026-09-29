@@ -369,6 +369,7 @@ button {
   --color-anjo-white: #ffffff;
   --color-anjo-muted: #5c7061;
   --color-anjo-border: #dce5d7;
+  --color-anjo-card-border: #bdd29f;
   --color-anjo-orange: #ef873e;
   --color-anjo-orange-light: #fff0e2;
   --color-anjo-shadow: #163e2910;
@@ -1462,10 +1463,15 @@ button {
   gap: 12px;
   min-width: 0;
   padding: 24px;
-  border: 1px solid var(--color-anjo-border);
-  border-radius: 18px;
+  border: 2px solid var(--color-anjo-card-border);
+  border-radius: 22px;
   background: var(--color-anjo-white);
+  overflow: hidden;
   overflow-wrap: anywhere;
+  box-shadow: 0 3px 0 var(--color-anjo-light);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 .anjo-topic-card:hover {
   border-color: var(--color-anjo-green);
@@ -1615,5 +1621,63 @@ button {
   }
   .anjo-fact-money dd {
     font-size: 1.3rem;
+  }
+}
+
+/* Theme photographs keep a calm visual rhythm; titles and amounts stay readable. */
+.anjo-theme-photo {
+  margin: 0;
+}
+.anjo-theme-photo img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+.anjo-theme-photo-card {
+  position: relative;
+  margin: -24px -24px 2px;
+  border-bottom: 2px solid var(--color-anjo-card-border);
+}
+.anjo-theme-photo-card img {
+  height: 170px;
+}
+.anjo-theme-photo-card figcaption {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: var(--color-anjo-white);
+  color: var(--color-anjo-muted);
+  font-size: 10px;
+}
+.anjo-theme-photo-detail {
+  margin: 0 0 26px;
+}
+.anjo-theme-photo-detail img {
+  max-height: 300px;
+  border-radius: 20px;
+  border: 2px solid var(--color-anjo-card-border);
+}
+.anjo-theme-photo-detail figcaption {
+  margin-top: 8px;
+  color: var(--color-anjo-muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.anjo-theme-photo-detail a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.anjo-topic-card:focus-visible {
+  outline: 3px solid var(--color-anjo-green);
+  outline-offset: 4px;
+}
+@media (max-width: 700px) {
+  .anjo-theme-photo-card img {
+    height: 145px;
+  }
+  .anjo-theme-photo-detail img {
+    max-height: 200px;
   }
 }

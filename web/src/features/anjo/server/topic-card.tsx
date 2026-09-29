@@ -4,6 +4,7 @@ import Link from "next/link";
 import { routes } from "@/lib/routes";
 import { Furigana } from "./furigana";
 import { ReadingText } from "./reading-text";
+import { ThemePhoto } from "./theme-photo";
 import type { AnjoTopic } from "./topic-repository";
 
 export function TopicCard({
@@ -19,6 +20,7 @@ export function TopicCard({
       href={`${routes.topicDetail(topic.id)}${query}`}
       className="anjo-topic-card"
     >
+      <ThemePhoto subject={c.formalTitle || c.title} />
       <p className="anjo-eyebrow">
         <Furigana>{c.categories.join("・")}</Furigana>
       </p>

@@ -15,6 +15,7 @@ import {
 import { AnjoMarkdown, Furigana } from "./furigana";
 import { AnjoProgress } from "./progress";
 import { ReadingText } from "./reading-text";
+import { ThemePhoto } from "./theme-photo";
 import { getAnjoBill } from "./repository";
 import { TopicCard } from "./topic-card";
 import { listAnjoTopics } from "./topic-repository";
@@ -91,6 +92,7 @@ export async function AnjoBillPage({
           )}
         </p>
       </header>
+      <ThemePhoto subject={bill.name} variant="detail" />
       {topics.length > 0 &&
         (["normal", "hard"] as const).map((level) => (
           <p

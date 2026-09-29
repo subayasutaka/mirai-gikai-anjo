@@ -17,6 +17,7 @@ import {
 } from "../shared/topic-navigation";
 import { AnjoMarkdown, Furigana } from "./furigana";
 import { ReadingText } from "./reading-text";
+import { ThemePhoto } from "./theme-photo";
 import { TopicCard } from "./topic-card";
 import { listAnjoTopics } from "./topic-repository";
 
@@ -64,6 +65,7 @@ export async function AnjoTopicPage({
           <Furigana>{`資料確認：${formatDateWithDots(c.checkedOn)} ／ 内容更新：${formatDateWithDots(topic.updated_at)}`}</Furigana>
         </p>
       </header>
+      <ThemePhoto subject={c.formalTitle || c.title} variant="detail" />
       <dl className="anjo-facts-grid">
         <div>
           <dt>

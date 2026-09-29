@@ -1,0 +1,141 @@
+{
+  "license": "Pexels License (photos are not covered by the application AGPL license)",
+  "commercialUse": "Allowed under the linked license; political-context restrictions checked. No people or recognizable trademarks were selected.",
+  "terms": "https://www.pexels.com/license/",
+  "politicalContext": "https://help.pexels.com/hc/en-us/articles/360043229813-Can-I-use-photos-and-videos-from-Pexels-in-a-political-campaign",
+  "checkedOn": "2026-09-30",
+  "photos": [
+    {
+      "key": "budget",
+      "id": 5412200,
+      "author": "Kaboompics",
+      "source": "https://www.pexels.com/photo/calculator-with-pen-5412200/",
+      "src": "/anjo/photos/budget.jpg",
+      "alt": "計算機とペン",
+      "bytes": 49222,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "0df9038672a079e7aef69b5241f98942f4dee2a3795749b28126f06859eb1f5e"
+    },
+    {
+      "key": "water",
+      "id": 6256,
+      "author": "Karolina Grabowska / Kaboompics",
+      "source": "https://www.pexels.com/photo/water-flows-from-the-tap-to-sink-6256/",
+      "src": "/anjo/photos/water.jpg",
+      "alt": "蛇口から流れる水",
+      "bytes": 76217,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "f5e7729de5699d903dfb1589a9414fa4abf3cb2ae8649524eb03b6e459f83a55"
+    },
+    {
+      "key": "documents",
+      "id": 18677608,
+      "author": "Yusuf Çelik",
+      "source": "https://www.pexels.com/photo/opened-notebook-with-blank-pages-18677608/",
+      "src": "/anjo/photos/documents.jpg",
+      "alt": "ノートとペン",
+      "bytes": 85636,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "778978fe8c9e9b03a1da2d7ffa8156bf20c0629f4b937451294d8edbaf4306e5"
+    },
+    {
+      "key": "flowers",
+      "id": 5960675,
+      "author": "cottonbro studio",
+      "source": "https://www.pexels.com/photo/white-flowers-in-clear-glass-vase-5960675/",
+      "src": "/anjo/photos/flowers.jpg",
+      "alt": "窓辺の白い花",
+      "bytes": 68882,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "ad0e78f8173c811819b8d29316a2838788d8562dcb9ba69321b6e24043120cee"
+    },
+    {
+      "key": "health",
+      "id": 6753427,
+      "author": "Pavel Danilyuk",
+      "source": "https://www.pexels.com/photo/stethoscope-on-white-surface-6753427/",
+      "src": "/anjo/photos/health.jpg",
+      "alt": "白い机の聴診器",
+      "bytes": 68234,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "c3217dc44ffd107ce46fbb3f472c5e2707d5bb6786cd0b6ac413c84f77d98010"
+    },
+    {
+      "key": "recycling",
+      "id": 3735212,
+      "author": "Polina Tankilevitch",
+      "source": "https://www.pexels.com/photo/recycling-bins-3735212/",
+      "src": "/anjo/photos/recycling.jpg",
+      "alt": "分別用の容器",
+      "bytes": 55663,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "7623858cfaaa53d182e154bc4424e3952c673289ee650fcbcb83601bc9b9d929"
+    },
+    {
+      "key": "parking",
+      "id": 8910523,
+      "author": "Ellie Burgin",
+      "source": "https://www.pexels.com/photo/empty-spaces-of-parking-lot-8910523/",
+      "src": "/anjo/photos/parking.jpg",
+      "alt": "駐車場の区画",
+      "bytes": 151689,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "d77957fd044a27c913ba728d20ff7f3c05a5bc4955b3d98d2fe139808574d28e"
+    },
+    {
+      "key": "land",
+      "id": 7634479,
+      "author": "Marina Leonova",
+      "source": "https://www.pexels.com/photo/paper-map-on-the-white-surface-7634479/",
+      "src": "/anjo/photos/land.jpg",
+      "alt": "紙の地図",
+      "bytes": 27266,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "6966e4f43e7d39b3adadc161a5c31b09e0ab7db65c722c9b29e6ad9da2c058e5"
+    },
+    {
+      "key": "food",
+      "id": 7189421,
+      "author": "Anca",
+      "source": "https://www.pexels.com/photo/tasty-rice-with-stewed-vegetables-on-plate-7189421/",
+      "src": "/anjo/photos/food.jpg",
+      "alt": "ご飯と野菜のお皿",
+      "bytes": 136966,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "1332b6f8bd3707ca84266673f34381a96ed7a930e69f8545a416a4d83b73bee0"
+    },
+    {
+      "key": "pipes",
+      "id": 7794404,
+      "author": "Monstera Production",
+      "source": "https://www.pexels.com/photo/close-up-pipes-in-rain-7794404/",
+      "src": "/anjo/photos/pipes.jpg",
+      "alt": "水滴のついた配管",
+      "bytes": 157252,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "2ed0500ffa382e7a6301f3d7928c2f3eaacc33d94f6805745d04b8f0a8977beb"
+    },
+    {
+      "key": "technology",
+      "id": 785429,
+      "author": "Lukas Mayer",
+      "source": "https://www.pexels.com/photo/black-computer-keyboard-785429/",
+      "src": "/anjo/photos/technology.jpg",
+      "alt": "キーボード",
+      "bytes": 31172,
+      "checkedOn": "2026-09-30",
+      "license": "https://www.pexels.com/license/",
+      "sha256": "bfbc5ec363078c74493ae7f8c3781d506940ed6123b2a95ed660fac104c68d1e"
+    }
+  ]
+}
