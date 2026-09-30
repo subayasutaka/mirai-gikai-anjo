@@ -65,7 +65,11 @@ export async function AnjoTopicPage({
           <Furigana>{`資料確認：${formatDateWithDots(c.checkedOn)} ／ 内容更新：${formatDateWithDots(topic.updated_at)}`}</Furigana>
         </p>
       </header>
-      <ThemePhoto subject={c.formalTitle || c.title} variant="detail" />
+      <ThemePhoto
+        subject={c.formalTitle || c.title}
+        caseId={topic.id}
+        variant="detail"
+      />
       <dl className="anjo-facts-grid">
         <div>
           <dt>

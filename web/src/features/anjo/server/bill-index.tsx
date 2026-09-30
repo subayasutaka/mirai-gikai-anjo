@@ -349,7 +349,7 @@ function BillCard({
       href={`${routes.billDetail(bill.id)}${query}`}
       className="anjo-topic-card"
     >
-      <ThemePhoto subject={bill.name} />
+      <ThemePhoto subject={bill.name} caseId={bill.id} />
       <p className="anjo-eyebrow">
         <Furigana>{bill.name.split(" ")[0]}</Furigana>
       </p>

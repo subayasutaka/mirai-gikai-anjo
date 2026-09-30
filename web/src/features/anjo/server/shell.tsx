@@ -8,12 +8,24 @@ import {
   ReadingControls,
   ReadingPreferences,
 } from "../client/reading-preferences";
+import { ANJO_PHOTOS } from "../shared/utils/photos";
 import { CHAT_COPY } from "../shared/ui-text";
 import { Furigana, getMarkdownReadings } from "./furigana";
 
+const PHOTO_NOTE =
+  "写真は内容を伝えるための参考素材です。安城市の実際の施設や、案件の当事者を撮影したものではありません。";
+const PHOTO_LICENSE_NOTE = "商用利用可能な無料素材を使用しています。";
+
 export async function AnjoShell({ children }: { children: ReactNode }) {
   const readings = await getMarkdownReadings(
-    Object.values(CHAT_COPY).join("\n\n")
+    [
+      ...Object.values(CHAT_COPY),
+      PHOTO_NOTE,
+      PHOTO_LICENSE_NOTE,
+      "写真・素材について",
+      "利用条件",
+      ...Object.values(ANJO_PHOTOS).map((photo) => photo.alt),
+    ].join("\n\n")
   ).catch(() => ({}));
   return (
     <ReadingPreferences readings={{ ...readings }}>
@@ -59,6 +71,40 @@ export async function AnjoShell({ children }: { children: ReactNode }) {
             説明文は公開資料をもとにCodexが下書きし、運営者が確認・更新します。原資料と異なる場合は原資料を優先してください。ふりがなは自動で付けるため、読みが正しくないことがあります。
           </Furigana>
         </p>
+        <details className="anjo-photo-credits">
+          <summary>
+            <Furigana>写真・素材について</Furigana>
+          </summary>
+          <p>
+            <Furigana>{PHOTO_NOTE}</Furigana>
+          </p>
+          <ul>
+            {Object.values(ANJO_PHOTOS).map((photo) => (
+              <li key={photo.src}>
+                <Furigana>{photo.alt}</Furigana>（
+                <a
+                  href={photo.source}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {photo.author} / Pexels
+                </a>
+                ）
+              </li>
+            ))}
+          </ul>
+          <p>
+            <Furigana>{PHOTO_LICENSE_NOTE}</Furigana>（
+            <a
+              href="https://www.pexels.com/license/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Furigana>利用条件</Furigana>
+            </a>
+            ）
+          </p>
+        </details>
         <nav className="flex flex-wrap gap-5">
           <Link href={routes.privacy()}>
             <Furigana>{"データの取り扱い"}</Furigana>

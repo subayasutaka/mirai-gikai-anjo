@@ -20,7 +20,7 @@ export function TopicCard({
       href={`${routes.topicDetail(topic.id)}${query}`}
       className="anjo-topic-card"
     >
-      <ThemePhoto subject={c.formalTitle || c.title} />
+      <ThemePhoto subject={c.formalTitle || c.title} caseId={topic.id} />
       <p className="anjo-eyebrow">
         <Furigana>{c.categories.join("・")}</Furigana>
       </p>

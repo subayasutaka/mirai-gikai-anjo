@@ -1463,7 +1463,7 @@ button {
   gap: 12px;
   min-width: 0;
   padding: 24px;
-  border: 2px solid var(--color-anjo-card-border);
+  border: 3px solid var(--color-anjo-card-border);
   border-radius: 22px;
   background: var(--color-anjo-white);
   overflow: hidden;
@@ -1636,20 +1636,9 @@ button {
 .anjo-theme-photo-card {
   position: relative;
   margin: -24px -24px 2px;
-  border-bottom: 2px solid var(--color-anjo-card-border);
 }
 .anjo-theme-photo-card img {
   height: 170px;
-}
-.anjo-theme-photo-card figcaption {
-  position: absolute;
-  right: 10px;
-  bottom: 9px;
-  padding: 3px 8px;
-  border-radius: 8px;
-  background: var(--color-anjo-white);
-  color: var(--color-anjo-muted);
-  font-size: 10px;
 }
 .anjo-theme-photo-detail {
   margin: 0 0 26px;
@@ -1657,17 +1646,7 @@ button {
 .anjo-theme-photo-detail img {
   max-height: 300px;
   border-radius: 20px;
-  border: 2px solid var(--color-anjo-card-border);
-}
-.anjo-theme-photo-detail figcaption {
-  margin-top: 8px;
-  color: var(--color-anjo-muted);
-  font-size: 11px;
-  line-height: 1.7;
-}
-.anjo-theme-photo-detail a {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  border: 3px solid var(--color-anjo-card-border);
 }
 .anjo-topic-card:focus-visible {
   outline: 3px solid var(--color-anjo-green);
@@ -1680,4 +1659,20 @@ button {
   .anjo-theme-photo-detail img {
     max-height: 200px;
   }
+}
+
+.anjo-photo-credits {
+  font-size: 12px;
+  line-height: 1.8;
+}
+.anjo-photo-credits summary {
+  cursor: pointer;
+}
+.anjo-photo-credits ul {
+  margin: 8px 0;
+  padding-left: 18px;
+}
+.anjo-photo-credits a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

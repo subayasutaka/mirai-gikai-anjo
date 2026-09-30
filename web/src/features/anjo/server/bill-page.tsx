@@ -92,7 +92,7 @@ export async function AnjoBillPage({
           )}
         </p>
       </header>
-      <ThemePhoto subject={bill.name} variant="detail" />
+      <ThemePhoto subject={bill.name} caseId={bill.id} variant="detail" />
       {topics.length > 0 &&
         (["normal", "hard"] as const).map((level) => (
           <p
