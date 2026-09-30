@@ -40,12 +40,16 @@ export function AnjoDeliberations({
               normal={
                 easy[heading] ||
                 detailed[heading] ||
-                "このページに掲載した記録はまだありません。"
+                (heading === "一般質問"
+                  ? "ありません。"
+                  : "このページに掲載した記録はまだありません。")
               }
               hard={
                 detailed[heading] ||
                 easy[heading] ||
-                "この案件に関する記録は未掲載です。"
+                (heading === "一般質問"
+                  ? "ありません。"
+                  : "この案件に関する記録は未掲載です。")
               }
             />
           </div>
