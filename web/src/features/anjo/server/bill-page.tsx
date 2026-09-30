@@ -1,9 +1,10 @@
 import "server-only";
-import { isAnjoSubmissionPlanned } from "@mirai-gikai/shared/anjo/document-kind";
+import {
+  getAnjoDocumentKind,
+  isAnjoSubmissionPlanned,
+} from "@mirai-gikai/shared/anjo/document-kind";
 import { ExternalLink } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { AnjoChat } from "../client/chat";
 import { InitialDifficulty } from "../client/reading-preferences";
@@ -12,11 +13,16 @@ import {
   type TopicSearch,
   topicQuery,
 } from "../shared/topic-navigation";
+import { decisionDate, decisionSource } from "../shared/utils/decision";
+import { splitDeliberations } from "../shared/utils/deliberations";
+import { BackToList } from "./back-to-list";
+import { AnjoDecision } from "./decision";
+import { AnjoDeliberations } from "./deliberations";
 import { AnjoMarkdown, Furigana } from "./furigana";
 import { AnjoProgress } from "./progress";
 import { ReadingText } from "./reading-text";
-import { ThemePhoto } from "./theme-photo";
 import { getAnjoBill } from "./repository";
+import { ThemePhoto } from "./theme-photo";
 import { TopicCard } from "./topic-card";
 import { listAnjoTopics } from "./topic-repository";
 
@@ -40,16 +46,13 @@ export async function AnjoBillPage({
   const topics = (await listAnjoTopics()).filter((t) =>
     t.anjo_topic_bills.some((link) => link.bill_id === id)
   );
-  const query = topicQuery(readTopicSearch(search));
+  const query = topicQuery(
+    readTopicSearch({ ...search, view: search.view || "bills" })
+  );
   return (
-    <article>
+    <article className="anjo-detail-page">
       <InitialDifficulty difficulty={difficulty} />
-      <Link
-        className="anjo-text-link"
-        href={{ pathname: routes.home(), search: query }}
-      >
-        ← <Furigana>議案一覧へ</Furigana>
-      </Link>
+      <BackToList query={query} />
       {token && (
         <p className="anjo-note">
           <Furigana>
@@ -92,6 +95,17 @@ export async function AnjoBillPage({
           )}
         </p>
       </header>
+      <AnjoDecision
+        name={bill.name}
+        status={bill.status}
+        date={decisionDate(bill.name, bill.status, bill)}
+        sourceUrl={
+          decisionSource(bill.knowledge_source || "") ||
+          (getAnjoDocumentKind(bill.name) === "report"
+            ? bill.shugiin_url || undefined
+            : undefined)
+        }
+      />
       <ThemePhoto subject={bill.name} caseId={bill.id} variant="detail" />
       {topics.length > 0 &&
         (["normal", "hard"] as const).map((level) => (
@@ -115,7 +129,10 @@ export async function AnjoBillPage({
             />
           </h2>
           <p className="anjo-small">
-            <Furigana>{`${topics.length}内容を個別に説明しています。一部抜粋のため、カードの金額を足して議案全体の総額にはしないでください。`}</Furigana>
+            <ReadingText
+              normal={`${topics.length}項目を抜粋して説明しています。議案全体の金額は、下の本文で読めます。`}
+              hard={`議案内の${topics.length}事業・予算項目を抜粋しています。会計全体の補正額は本文に記載しています。`}
+            />
           </p>
           <div className="anjo-topic-grid">
             {topics.map((topic) => (
@@ -167,12 +184,26 @@ export async function AnjoBillPage({
                 </p>
                 <div className="anjo-markdown">
                   <AnjoMarkdown>
-                    {content?.content || "説明文を準備しています。"}
+                    {
+                      splitDeliberations(
+                        content?.content || "説明文を準備しています。"
+                      ).body
+                    }
                   </AnjoMarkdown>
                 </div>
               </section>
             );
           })}
+          <AnjoDeliberations
+            normal={
+              bill.bill_contents.find((c) => c.difficulty_level === "normal")
+                ?.content || ""
+            }
+            hard={
+              bill.bill_contents.find((c) => c.difficulty_level === "hard")
+                ?.content || ""
+            }
+          />
           <section className="anjo-panel">
             <h2>
               <ReadingText
@@ -192,9 +223,10 @@ export async function AnjoBillPage({
               </a>
             )}
             <p>
-              <Furigana>
-                このページは公開資料に基づく編集上の説明です。市の公式見解そのものではありません。すば康貴の賛否・政治的見解は、このページには掲載していません。
-              </Furigana>
+              <ReadingText
+                normal="このページは、もとになった資料や記録をわかりやすく説明しています。市が書いた説明や、すば康貴の賛否・政治的な意見とは区別しています。"
+                hard="このページは、出典に示した資料・記録に基づく編集上の説明です。市の公式見解そのものではありません。すば康貴の賛否・政治的見解は掲載していません。"
+              />
             </p>
           </section>
         </div>
@@ -213,6 +245,7 @@ export async function AnjoBillPage({
           )}
         </aside>
       </div>
+      <BackToList query={query} bottom />
     </article>
   );
 }

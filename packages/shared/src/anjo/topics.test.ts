@@ -66,3 +66,14 @@ describe("暮らしの内容", () => {
     expect(topicEditSchema.safeParse({id, sessionId:id, content, billIds:[id,id], publishStatus:"draft", reviewed:false, sortOrder:0, expectedUpdatedAt:null}).success).toBe(false);
   });
 });
+
+it("事業の内訳・対象・注意書きも読み分け、既存データの欠けた欄は維持する", async () => {
+  const { topicReading } = await import("./topics");
+  const value = topicContentSchema.parse({ ...content, simple: { moneyDetails: "市の通常のお金を使います。", target: "水道を使う人" } });
+  expect(topicReading(value, "moneyDetails", "normal")).toBe("市の通常のお金を使います。");
+  expect(topicReading(value, "moneyDetails", "hard")).toBe(content.moneyDetails);
+  expect(topicReading(value, "target", "normal")).toBe("水道を使う人");
+  expect(topicReading(value, "importantNote", "normal")).toBe(content.importantNote);
+  const { simple: _, ...legacy } = content;
+  expect(topicContentSchema.parse(legacy).simple).toEqual({});
+});

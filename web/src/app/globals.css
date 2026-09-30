@@ -1676,3 +1676,121 @@ button {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+.anjo-back-nav {
+  margin: 12px 0 22px;
+}
+.anjo-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 18px;
+  border: 2px solid var(--color-anjo-green);
+  border-radius: 14px;
+  background: var(--color-anjo-white);
+  color: var(--color-anjo-navy);
+  font-weight: 800;
+}
+.anjo-back-link:hover {
+  background: var(--color-anjo-light);
+}
+.anjo-back-link:focus-visible {
+  outline: 3px solid var(--color-anjo-navy);
+  outline-offset: 4px;
+}
+.anjo-back-bottom {
+  margin-top: 32px;
+}
+.anjo-related-decisions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 16px;
+}
+.anjo-decision {
+  border: 2px solid var(--color-anjo-border);
+  border-radius: 18px;
+  padding: 20px 24px;
+  margin: 20px 0;
+  background: var(--color-anjo-white);
+}
+.anjo-decision[data-tone="positive"] {
+  border-color: var(--color-anjo-green);
+  background: var(--color-anjo-light);
+}
+.anjo-decision[data-tone="negative"] {
+  border-color: var(--color-anjo-accent);
+  background: var(--color-anjo-orange-light);
+}
+.anjo-decision-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0;
+  color: var(--color-anjo-navy);
+  font-size: 32px;
+  font-weight: 900;
+}
+.anjo-decision[data-tone="negative"] .anjo-decision-result {
+  color: var(--color-anjo-navy);
+}
+.anjo-decision[data-tone="negative"] .anjo-decision-result svg {
+  color: var(--color-anjo-accent);
+}
+.anjo-decision[data-tone="neutral"] .anjo-decision-result {
+  color: var(--color-anjo-muted);
+  font-size: 24px;
+}
+.anjo-decision-bill {
+  font-weight: 700;
+}
+.anjo-decision-date {
+  margin-top: 8px;
+  font-size: 15px;
+}
+.anjo-decision-source {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--color-anjo-muted);
+}
+.anjo-decision-source a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.anjo-note [data-reading-level] {
+  white-space: pre-line;
+}
+.anjo-deliberations {
+  margin: 26px 0;
+}
+.anjo-deliberations h2 {
+  font-size: 23px;
+  font-weight: 800;
+}
+@media (max-width: 700px) {
+  .anjo-site:has(.anjo-detail-page) .anjo-footer {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+  .anjo-detail-page {
+    padding-bottom: 78px;
+  }
+  .anjo-back-nav:not(.anjo-back-bottom) {
+    position: fixed;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: 14px;
+    right: 14px;
+    z-index: 25;
+    margin: 0;
+    pointer-events: none;
+  }
+  .anjo-back-nav:not(.anjo-back-bottom) .anjo-back-link {
+    pointer-events: auto;
+    box-shadow: 0 3px 10px var(--color-anjo-shadow);
+  }
+  .anjo-back-bottom {
+    display: none;
+  }
+  .anjo-decision {
+    padding: 18px;
+  }
+}

@@ -1,4 +1,5 @@
 import "server-only";
+import { topicReading } from "@mirai-gikai/shared/anjo/topics";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
@@ -34,11 +35,17 @@ export function TopicCard({
         <Furigana>{c.description}</Furigana>
       </p>
       <p className="anjo-small">
-        <Furigana>{c.period}</Furigana>
+        <ReadingText
+          normal={topicReading(c, "period", "normal")}
+          hard={topicReading(c, "period", "hard")}
+        />
       </p>
       <div className="anjo-topic-money">
         <span>
-          <Furigana>{c.moneyLabel}</Furigana>
+          <ReadingText
+            normal={topicReading(c, "moneyLabel", "normal")}
+            hard={topicReading(c, "moneyLabel", "hard")}
+          />
         </span>
         <strong>
           <Furigana>{c.moneyValue}</Furigana>

@@ -3,6 +3,7 @@ import {
   TOPIC_CATEGORIES,
   type TopicContent,
   type TopicEdit,
+  type TopicReadingField,
 } from "@mirai-gikai/shared/anjo/topics";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,6 +12,16 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { routes } from "@/lib/routes";
 import { saveTopic } from "../server/topic-actions";
+
+const READING_FIELDS = new Set<string>([
+  "target",
+  "period",
+  "moneyLabel",
+  "importantNote",
+  "moneyDetails",
+  "sourceNote",
+  "deliberationDetails",
+]);
 
 type TextKey = {
   [K in keyof TopicContent]: TopicContent[K] extends string ? K : never;
@@ -236,6 +247,7 @@ export function TopicForm({
             className="block font-medium"
           >
             {field.label}
+            {READING_FIELDS.has(field.key) ? "（くわしく）" : ""}
             {field.long ? (
               <textarea
                 id={`topic-${field.key}`}
@@ -259,6 +271,30 @@ export function TopicForm({
                 onChange={(e) => content({ [field.key]: e.target.value })}
               />
             )}{" "}
+            {READING_FIELDS.has(field.key) && (
+              <span className="block mt-3 font-normal">
+                かんたん：{field.label}
+                <textarea
+                  className="block w-full border rounded p-3"
+                  rows={field.long ? 4 : 2}
+                  aria-label={`かんたん：${field.label}`}
+                  value={
+                    form.content.simple[field.key as TopicReadingField] || ""
+                  }
+                  onChange={(e) =>
+                    content({
+                      simple: {
+                        ...form.content.simple,
+                        [field.key]: e.target.value || undefined,
+                      },
+                    })
+                  }
+                />
+                <span className="text-sm text-muted-foreground">
+                  同じ条件・金額を保ち、専門用語を説明してください。空欄ならくわしい文章を表示します。
+                </span>
+              </span>
+            )}
             {field.help && (
               <span className="text-sm font-normal text-muted-foreground">
                 {field.help}

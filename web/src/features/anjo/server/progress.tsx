@@ -12,7 +12,7 @@ import {
   formatProgressDate,
 } from "@mirai-gikai/shared/anjo/progress-dates";
 import { Check, MapPin } from "lucide-react";
-import { Furigana } from "./furigana";
+import { AnjoMarkdown, Furigana } from "./furigana";
 import { ReadingText } from "./reading-text";
 
 export function AnjoProgress({
@@ -43,9 +43,10 @@ export function AnjoProgress({
           <Furigana>{getAnjoDocumentStatus(documentName, status)}</Furigana>
         </p>
         <p>
-          <Furigana>
-            委員の選任・任命について、議会の同意を求める案件です。
-          </Furigana>
+          <ReadingText
+            normal="市長が委員を選ぶため、議会に同意を求める案です。"
+            hard="委員の選任・任命について、議会の同意を求める案件です。"
+          />
         </p>
         {ANJO_PROGRESS_STEPS.map((step, index) => {
           const date = formatProgressDate(dates[step.dateField]);
@@ -56,11 +57,7 @@ export function AnjoProgress({
             </p>
           );
         })}
-        {note && (
-          <p className="anjo-progress-note">
-            <Furigana>{note}</Furigana>
-          </p>
-        )}
+        <ProgressNote note={note} />
       </section>
     );
   }
@@ -72,20 +69,17 @@ export function AnjoProgress({
           <ReadingText normal="この報告について" hard="報告案件の位置づけ" />
         </h2>
         <p>
-          <Furigana>
-            議会への報告資料です。可決・否決を決める採決の対象ではありません。
-          </Furigana>
+          <ReadingText
+            normal="市が議会へ報告する資料です。賛成・反対を決める採決は行いません。"
+            hard="議会への報告資料です。可決・否決を決める採決の対象ではありません。"
+          />
         </p>
         {dateLabel && (
           <p>
             <Furigana>{`提出：${dateLabel}`}</Furigana>
           </p>
         )}
-        {note && (
-          <p className="anjo-progress-note">
-            <Furigana>{note}</Furigana>
-          </p>
-        )}
+        <ProgressNote note={note} />
       </section>
     );
   }
@@ -146,7 +140,20 @@ export function AnjoProgress({
                 )}
               </span>
               <strong>
-                <Furigana>{step.label}</Furigana>
+                <ReadingText
+                  normal={
+                    index === 0
+                      ? "議案を提出"
+                      : index === 1
+                        ? "本会議で質問"
+                        : index === 2
+                          ? kind === "certification"
+                            ? "決算を調べる"
+                            : "委員会で質問"
+                          : "議会で決定"
+                  }
+                  hard={step.label}
+                />
               </strong>
               <span className="anjo-step-date">
                 {dateLabel ? (
@@ -167,7 +174,18 @@ export function AnjoProgress({
                 </span>
               )}
               <span className="anjo-step-description">
-                <Furigana>{step.description}</Furigana>
+                <ReadingText
+                  normal={
+                    index === 0
+                      ? "議会に案を出す"
+                      : index === 1
+                        ? "議員が内容を確かめる"
+                        : index === 2
+                          ? "担当の委員会で詳しく調べる"
+                          : "賛成・反対を決める"
+                  }
+                  hard={step.description}
+                />
               </span>
               {index === current && (
                 <span className="anjo-here">
@@ -178,11 +196,24 @@ export function AnjoProgress({
           );
         })}
       </ol>
-      {note && (
-        <p className="anjo-progress-note">
-          <Furigana>{note}</Furigana>
-        </p>
-      )}
+      <ProgressNote note={note} />
     </section>
+  );
+}
+
+function ProgressNote({ note }: { note?: string | null }) {
+  if (!note) return null;
+  return (
+    <details className="anjo-disclosure anjo-progress-note">
+      <summary>
+        <ReadingText
+          normal="確認した資料・日程のメモ"
+          hard="資料照合・審議日程の記録"
+        />
+      </summary>
+      <div className="anjo-markdown">
+        <AnjoMarkdown>{note}</AnjoMarkdown>
+      </div>
+    </details>
   );
 }

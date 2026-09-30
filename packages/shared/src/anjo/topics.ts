@@ -25,6 +25,13 @@ export const topicContentSchema = z.object({
   knowledgeSource: z.string().trim().min(1).max(6000),
   committeeDates: z.array(z.object({name: short, date: isoDate.nullable(), note: z.string().max(250)})).max(6),
   deliberationDetails: optionalText,
+  simple: z.object({
+    target: short.optional(), period: short.optional(),
+    moneyLabel: short.optional(), importantNote: short.optional(),
+    moneyDetails: z.string().trim().min(1).max(5000).optional(),
+    sourceNote: z.string().trim().min(1).max(1500).optional(),
+    deliberationDetails: optionalText.optional(),
+  }).strict().default({}),
   checkedOn: isoDate,
   relatedTopics: z.array(z.object({id: z.uuid(), relation: z.enum(["same_theme", "previous", "next", "similar"])})).max(12),
 }).strict();
@@ -83,5 +90,10 @@ export const EMPTY_TOPIC_CONTENT: TopicContent = {
   version: 1, title: "", formalTitle: "", categories: ["その他"], themes: [],
   summary: "", description: "", target: "", period: "", moneyLabel: "今回の追加予算", moneyValue: "",
   importantNote: "", moneyDetails: "", sourceNote: "", sourceUrl: "https://anjo-shigikai.jp/know/result/r8/",
-  knowledgeSource: "", committeeDates: [], deliberationDetails: "", checkedOn: "", relatedTopics: [],
+  simple: {}, knowledgeSource: "", committeeDates: [], deliberationDetails: "", checkedOn: "", relatedTopics: [],
 };
+
+export type TopicReadingField = keyof TopicContent["simple"];
+export function topicReading(content: TopicContent, field: TopicReadingField, level: "normal" | "hard") {
+  return level === "normal" ? content.simple[field] || content[field] : content[field];
+}

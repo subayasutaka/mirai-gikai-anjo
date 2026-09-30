@@ -5,6 +5,7 @@ import {
   isAnjoSubmissionPlanned,
 } from "@mirai-gikai/shared/anjo/document-kind";
 import { formatProgressDate } from "@mirai-gikai/shared/anjo/progress-dates";
+import { topicReading } from "@mirai-gikai/shared/anjo/topics";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { routes } from "@/lib/routes";
@@ -15,8 +16,11 @@ import {
   type TopicSearch,
   topicQuery,
 } from "../shared/topic-navigation";
-import { AnjoMarkdown, Furigana } from "./furigana";
-import { ReadingText } from "./reading-text";
+import { decisionDate, decisionSource } from "../shared/utils/decision";
+import { BackToList } from "./back-to-list";
+import { AnjoDecision } from "./decision";
+import { Furigana } from "./furigana";
+import { ReadingMarkdown, ReadingText } from "./reading-text";
 import { ThemePhoto } from "./theme-photo";
 import { TopicCard } from "./topic-card";
 import { listAnjoTopics } from "./topic-repository";
@@ -40,13 +44,8 @@ export async function AnjoTopicPage({
   );
   const primary = bills[0];
   return (
-    <article className="anjo-content-page">
-      <Link
-        className="anjo-text-link"
-        href={{ pathname: routes.home(), search: query }}
-      >
-        ← <Furigana>一覧へ戻る</Furigana>
-      </Link>
+    <article className="anjo-content-page anjo-detail-page">
+      <BackToList query={query} />
       <header className="anjo-detail-heading">
         <p className="anjo-eyebrow">
           <Furigana>{topic.diet_sessions?.name || "会期未登録"}</Furigana> /{" "}
@@ -62,9 +61,21 @@ export async function AnjoTopicPage({
           <Furigana>{c.description}</Furigana>
         </p>
         <p className="anjo-small">
-          <Furigana>{`資料確認：${formatDateWithDots(c.checkedOn)} ／ 内容更新：${formatDateWithDots(topic.updated_at)}`}</Furigana>
+          <Furigana>{`内容更新：${formatDateWithDots(topic.updated_at)}`}</Furigana>
         </p>
       </header>
+      <div className="anjo-related-decisions">
+        {bills.map((bill) => (
+          <AnjoDecision
+            key={bill.id}
+            name={bill.name}
+            status={bill.status}
+            date={decisionDate(bill.name, bill.status, bill)}
+            sourceUrl={decisionSource(c.knowledgeSource)}
+            related
+          />
+        ))}
+      </div>
       <ThemePhoto
         subject={c.formalTitle || c.title}
         caseId={topic.id}
@@ -76,7 +87,10 @@ export async function AnjoTopicPage({
             <ReadingText normal="誰・何が対象？" hard="対象者・対象施設" />
           </dt>
           <dd>
-            <Furigana>{c.target}</Furigana>
+            <ReadingText
+              normal={topicReading(c, "target", "normal")}
+              hard={topicReading(c, "target", "hard")}
+            />
           </dd>
         </div>
         <div>
@@ -84,12 +98,18 @@ export async function AnjoTopicPage({
             <ReadingText normal="いつの話？" hard="対象期間・実施時期" />
           </dt>
           <dd>
-            <Furigana>{c.period}</Furigana>
+            <ReadingText
+              normal={topicReading(c, "period", "normal")}
+              hard={topicReading(c, "period", "hard")}
+            />
           </dd>
         </div>
         <div className="anjo-fact-money">
           <dt>
-            <Furigana>{c.moneyLabel}</Furigana>
+            <ReadingText
+              normal={topicReading(c, "moneyLabel", "normal")}
+              hard={topicReading(c, "moneyLabel", "hard")}
+            />
           </dt>
           <dd>
             <Furigana>{c.moneyValue}</Furigana>
@@ -97,17 +117,10 @@ export async function AnjoTopicPage({
         </div>
       </dl>
       <p className="anjo-note">
-        <Furigana>{c.importantNote}</Furigana>
-      </p>
-      <p className="anjo-small">
-        <Furigana>
-          {bills
-            .map(
-              (b) =>
-                `${b.name.split(" ")[0]}：${getAnjoDocumentStatus(b.name, b.status)}`
-            )
-            .join(" ／ ")}
-        </Furigana>
+        <ReadingText
+          normal={topicReading(c, "importantNote", "normal")}
+          hard={topicReading(c, "importantNote", "hard")}
+        />
       </p>
       <details className="anjo-disclosure">
         <summary>
@@ -117,7 +130,10 @@ export async function AnjoTopicPage({
           />
         </summary>
         <div className="anjo-markdown">
-          <AnjoMarkdown>{c.moneyDetails}</AnjoMarkdown>
+          <ReadingMarkdown
+            normal={topicReading(c, "moneyDetails", "normal")}
+            hard={c.moneyDetails}
+          />
         </div>
       </details>
       <details className="anjo-disclosure">
@@ -136,7 +152,10 @@ export async function AnjoTopicPage({
           ).map((step) => (
             <li key={step.field}>
               <strong>
-                <Furigana>{step.label}</Furigana>
+                <ReadingText
+                  normal={step.label === "上程" ? "議案を提出" : "本会議で質問"}
+                  hard={step.label}
+                />
               </strong>
               {bills.map((bill) => (
                 <p key={bill.id}>
@@ -147,7 +166,7 @@ export async function AnjoTopicPage({
           ))}
           <li>
             <strong>
-              <Furigana>委員会質疑</Furigana>
+              <ReadingText normal="委員会で質問" hard="委員会質疑" />
             </strong>
             {c.committeeDates.length ? (
               c.committeeDates.map((d) => (
@@ -161,7 +180,7 @@ export async function AnjoTopicPage({
           </li>
           <li>
             <strong>
-              <Furigana>採決</Furigana>
+              <ReadingText normal="議会で決定" hard="採決" />
             </strong>
             {bills.map((b) => (
               <p key={b.id}>
@@ -174,21 +193,20 @@ export async function AnjoTopicPage({
             ))}
           </li>
         </ol>
-        {bills.map((b) => (
-          <p className="anjo-small" key={b.id}>
-            <Furigana>
-              {b.status_note || "審議状況の詳しい資料は未登録です。"}
-            </Furigana>
-          </p>
-        ))}
         <h2>
           <ReadingText normal="議員の質問と市の回答" hard="質疑・答弁の概要" />
         </h2>
         <div className="anjo-markdown">
-          <AnjoMarkdown>
-            {c.deliberationDetails ||
-              "概要は資料を確認後に掲載します。質問者・質問の要点・市の答弁・出典を、この内容に関係する範囲でまとめます。"}
-          </AnjoMarkdown>
+          <ReadingMarkdown
+            normal={
+              topicReading(c, "deliberationDetails", "normal") ||
+              "質問と市の回答は、記録を確認してから掲載します。"
+            }
+            hard={
+              c.deliberationDetails ||
+              "質疑・答弁の記録は未登録です。資料確認後、質問者・答弁者・要点・出典を掲載します。"
+            }
+          />
         </div>
       </details>
       <details className="anjo-disclosure">
@@ -212,7 +230,10 @@ export async function AnjoTopicPage({
           <ReadingText normal="この内容が入っている議案" hard="関連する議案" />
         </h2>
         <p>
-          <Furigana>会計全体の金額と、ほかの内容を確認できます。</Furigana>
+          <ReadingText
+            normal="予算全体の金額と、ほかの内容も読めます。"
+            hard="関連する会計全体の補正額と、ほかの予算項目を確認できます。"
+          />
         </p>
         {bills.map((b) => (
           <Link
@@ -232,10 +253,34 @@ export async function AnjoTopicPage({
           />
         </summary>
         <p>
-          <Furigana>{c.formalTitle}</Furigana>
+          <ReadingText normal={c.title} hard={c.formalTitle} />
         </p>
-        <p>
-          <Furigana>{c.sourceNote}</Furigana>
+        <div className="anjo-markdown">
+          <ReadingMarkdown
+            normal={topicReading(c, "sourceNote", "normal")}
+            hard={c.sourceNote}
+          />
+        </div>
+        {bills
+          .filter((b) => b.status_note)
+          .map((b) => (
+            <details className="anjo-disclosure" key={b.id}>
+              <summary>
+                <ReadingText
+                  normal={`${b.name.split(" ")[0]}：確認した日程のメモ`}
+                  hard={`${b.name.split(" ")[0]}：資料照合・審議日程の記録`}
+                />
+              </summary>
+              <div className="anjo-markdown">
+                <ReadingMarkdown
+                  normal={b.status_note || ""}
+                  hard={b.status_note || ""}
+                />
+              </div>
+            </details>
+          ))}
+        <p className="anjo-small">
+          資料確認日：{formatDateWithDots(c.checkedOn)}
         </p>
         <a
           className="anjo-text-link"
@@ -278,6 +323,7 @@ export async function AnjoTopicPage({
           })}
         </section>
       )}
+      <BackToList query={query} bottom />
     </article>
   );
 }
