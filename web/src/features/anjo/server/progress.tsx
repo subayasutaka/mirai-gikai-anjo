@@ -116,8 +116,10 @@ export function AnjoProgress({
               <span className="anjo-step-marker">
                 {skipped ? (
                   <Minus size={17} aria-label="省略された段階" />
-                ) : index < current ? (
-                  <Check size={17} aria-label="通過した段階" />
+                ) : index < current ||
+                  (index === current &&
+                    (status === "enacted" || status === "rejected")) ? (
+                  <Check size={17} aria-label="完了した段階" />
                 ) : (
                   index + 1
                 )}
