@@ -6,6 +6,8 @@ on:
 
 jobs:
   migrate-and-deploy:
+    # Disabled for the personal pilot until explicitly configured.
+    if: vars.ANJO_ENABLE_AUTOMATED_DEPLOY == 'true'
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     steps:

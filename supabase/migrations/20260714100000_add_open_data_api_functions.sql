@@ -136,3 +136,17 @@ CREATE INDEX idx_interview_report_data_reuse_public
 CREATE INDEX idx_interview_report_public_session
   ON interview_report (interview_session_id)
   WHERE is_public_by_admin AND is_public_by_user;
+
+-- Anjo pilot: deny direct API execution of the functions defined above.
+-- Preserve access only for trusted server-side service_role calls.
+DO $anjo$
+DECLARE target regprocedure;
+BEGIN
+  FOR target IN SELECT p.oid::regprocedure FROM pg_proc p
+    JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND p.proname IN ('find_open_data_interview_reports','increment_api_rate_limit')
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated', target);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO service_role', target);
+  END LOOP;
+END $anjo$;

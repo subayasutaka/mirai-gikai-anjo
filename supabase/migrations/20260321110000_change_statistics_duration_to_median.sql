@@ -69,3 +69,7 @@ BEGIN
   WHERE s.interview_config_id = p_config_id;
 END;
 $$ LANGUAGE plpgsql STABLE;
+
+-- Anjo pilot: recreating a function must not restore default public access.
+REVOKE ALL ON FUNCTION public.get_interview_statistics(uuid) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_interview_statistics(uuid) TO service_role;

@@ -1,6 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
+import { routes } from "@/lib/routes";
 import {
   invalidateWebCache,
   WEB_CACHE_TAGS,
@@ -18,7 +20,7 @@ export async function createDietSession(input: CreateDietSessionInput) {
 
     // バリデーション
     if (!input.name || input.name.trim().length === 0) {
-      return { error: "国会名を入力してください" };
+      return { error: "会期名を入力してください" };
     }
 
     if (!input.start_date) {
@@ -47,12 +49,13 @@ export async function createDietSession(input: CreateDietSessionInput) {
       end_date: input.end_date,
     });
 
+    revalidatePath(routes.dietSessions());
     await invalidateWebCache([WEB_CACHE_TAGS.DIET_SESSIONS]);
     return { data };
   } catch (error) {
     console.error("Create diet session error:", error);
     return {
-      error: getErrorMessage(error, "国会会期の作成中にエラーが発生しました"),
+      error: getErrorMessage(error, "会期の作成中にエラーが発生しました"),
     };
   }
 }

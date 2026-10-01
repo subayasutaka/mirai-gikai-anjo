@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DeliberationImporter } from "@/features/deliberations/client/deliberation-importer";
 import { routes } from "@/lib/routes";
 import {
   Form,
@@ -38,11 +39,13 @@ import {
 interface BillContentsEditFormProps {
   bill: Bill;
   billContents: BillContent[];
+  localAudioEnabled: boolean;
 }
 
 export function BillContentsEditForm({
   bill,
   billContents,
+  localAudioEnabled,
 }: BillContentsEditFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,6 +101,18 @@ export function BillContentsEditForm({
         <p className="text-sm text-gray-600">{bill.name}</p>
       </CardHeader>
       <CardContent>
+        <DeliberationImporter
+          billId={bill.id}
+          localAudioEnabled={localAudioEnabled}
+          onAppend={(markdown) => {
+            for (const level of ["normal", "hard"] as const)
+              form.setValue(
+                `${level}.content`,
+                `${form.getValues(`${level}.content`) || ""}\n\n${markdown}`,
+                { shouldDirty: true }
+              );
+          }}
+        />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <Tabs defaultValue="normal" className="">

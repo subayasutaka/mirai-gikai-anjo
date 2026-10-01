@@ -32,3 +32,6 @@ $$;
 
 comment on function public.count_public_reports_by_bill_ids(uuid[]) is
   '議案ごとの公開レポート件数（管理者公開 × ユーザー公開）をまとめて返す。法案一覧の回答数バッジ用。';
+
+REVOKE ALL ON FUNCTION public.count_public_reports_by_bill_ids(uuid[]) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.count_public_reports_by_bill_ids(uuid[]) TO service_role;

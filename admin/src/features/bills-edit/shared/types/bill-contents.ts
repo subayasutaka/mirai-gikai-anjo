@@ -40,6 +40,6 @@ export type BillContentsUpdateInput = z.infer<typeof billContentsUpdateSchema>;
 
 // 難易度レベル設定
 export const DIFFICULTY_LEVELS: { value: DifficultyLevel; label: string }[] = [
-  { value: "normal", label: "ふつう" },
-  { value: "hard", label: "難しい" },
+  { value: "normal", label: "やさしい説明" },
+  { value: "hard", label: "詳しい説明" },
 ];

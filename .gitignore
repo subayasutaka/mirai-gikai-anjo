@@ -2,6 +2,8 @@ node_modules
 
 # misc
 .DS_Store
+# macOS folder icon metadata
+Icon?
 .vscode
 .claude/worktrees
 *.local.json
@@ -16,3 +18,8 @@ node_modules
 infra/cloud-run/config.env
 infra/cloud-run/config.env.*
 *-key.json
+# Deployment metadata and local verification output
+.vercel/
+artifacts/
+# Personal operator handover notes (kept locally, outside public source)
+/docs/安城版みらい議会_*

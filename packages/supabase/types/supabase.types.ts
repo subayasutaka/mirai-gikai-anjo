@@ -7,33 +7,134 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
+      anjo_ai_usage: {
+        Row: {
+          actual_usd: number | null
+          bill_id: string | null
+          client_hash: string
+          created_at: string
+          duration_ms: number | null
+          id: string
+          input_tokens: number | null
+          model: string
+          output_tokens: number | null
+          reserved_usd: number
+          state: string
+        }
+        Insert: {
+          actual_usd?: number | null
+          bill_id?: string | null
+          client_hash: string
+          created_at?: string
+          duration_ms?: number | null
+          id: string
+          input_tokens?: number | null
+          model?: string
+          output_tokens?: number | null
+          reserved_usd?: number
+          state?: string
+        }
+        Update: {
+          actual_usd?: number | null
+          bill_id?: string | null
+          client_hash?: string
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          input_tokens?: number | null
+          model?: string
+          output_tokens?: number | null
+          reserved_usd?: number
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anjo_ai_usage_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anjo_topic_bills: {
+        Row: {
+          bill_id: string
+          topic_id: string
+        }
+        Insert: {
+          bill_id: string
+          topic_id: string
+        }
+        Update: {
+          bill_id?: string
+          topic_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anjo_topic_bills_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "anjo_topic_bills_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "anjo_topics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anjo_topics: {
+        Row: {
+          content: Json
+          created_at: string
+          diet_session_id: string
+          id: string
+          is_review_completed: boolean
+          publish_status: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          diet_session_id: string
+          id?: string
+          is_review_completed?: boolean
+          publish_status?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          diet_session_id?: string
+          id?: string
+          is_review_completed?: boolean
+          publish_status?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anjo_topics_diet_session_id_fkey"
+            columns: ["diet_session_id"]
+            isOneToOne: false
+            referencedRelation: "diet_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_rate_limits: {
         Row: {
           key: string
@@ -95,14 +196,17 @@ export type Database = {
       }
       bills: {
         Row: {
+          committee_question_date: string | null
           created_at: string
           diet_session_id: string | null
           id: string
+          introduction_date: string | null
           is_featured: boolean
           is_review_completed: boolean
           knowledge_source: string | null
           name: string
           originating_house: Database["public"]["Enums"]["house_enum"]
+          plenary_question_date: string | null
           publish_status: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order: number | null
           published_at: string | null
@@ -116,16 +220,20 @@ export type Database = {
           thumbnail_url: string | null
           updated_at: string
           use_knowledge_source_in_chat: boolean
+          vote_date: string | null
         }
         Insert: {
+          committee_question_date?: string | null
           created_at?: string
           diet_session_id?: string | null
           id?: string
+          introduction_date?: string | null
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
           name: string
           originating_house: Database["public"]["Enums"]["house_enum"]
+          plenary_question_date?: string | null
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
           published_at?: string | null
@@ -139,16 +247,20 @@ export type Database = {
           thumbnail_url?: string | null
           updated_at?: string
           use_knowledge_source_in_chat?: boolean
+          vote_date?: string | null
         }
         Update: {
+          committee_question_date?: string | null
           created_at?: string
           diet_session_id?: string | null
           id?: string
+          introduction_date?: string | null
           is_featured?: boolean
           is_review_completed?: boolean
           knowledge_source?: string | null
           name?: string
           originating_house?: Database["public"]["Enums"]["house_enum"]
+          plenary_question_date?: string | null
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
           published_at?: string | null
@@ -162,6 +274,7 @@ export type Database = {
           thumbnail_url?: string | null
           updated_at?: string
           use_knowledge_source_in_chat?: boolean
+          vote_date?: string | null
         }
         Relationships: [
           {
@@ -1370,6 +1483,37 @@ export type Database = {
         Args: { p_version_id: string }
         Returns: undefined
       }
+      reserve_anjo_ai_request: {
+        Args: {
+          p_allow_draft?: boolean
+          p_bill_id: string
+          p_client_hash: string
+          p_id: string
+        }
+        Returns: string
+      }
+      save_anjo_bill_contents: {
+        Args: {
+          p_bill_id: string
+          p_hard: Json
+          p_knowledge_source: string
+          p_normal: Json
+        }
+        Returns: undefined
+      }
+      save_anjo_topic: {
+        Args: {
+          p_bill_ids: string[]
+          p_content: Json
+          p_expected_updated_at?: string
+          p_id: string
+          p_publish_status: string
+          p_reviewed: boolean
+          p_session_id: string
+          p_sort_order: number
+        }
+        Returns: string
+      }
       set_active_diet_session: {
         Args: { target_session_id: string }
         Returns: undefined
@@ -1394,7 +1538,7 @@ export type Database = {
         | "preparing"
       chat_role_enum: "user" | "system" | "assistant"
       difficulty_level_enum: "normal" | "hard"
-      house_enum: "HR" | "HC"
+      house_enum: "HR" | "HC" | "ANJO"
       interview_config_status_enum: "public" | "closed"
       interview_feedback_tag_enum:
         | "irrelevant_questions"
@@ -1435,12 +1579,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1464,11 +1608,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1489,11 +1633,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1514,11 +1658,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1531,11 +1675,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1545,9 +1689,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       bill_publish_status: ["draft", "published", "coming_soon"],
@@ -1561,7 +1702,7 @@ export const Constants = {
       ],
       chat_role_enum: ["user", "system", "assistant"],
       difficulty_level_enum: ["normal", "hard"],
-      house_enum: ["HR", "HC"],
+      house_enum: ["HR", "HC", "ANJO"],
       interview_config_status_enum: ["public", "closed"],
       interview_feedback_tag_enum: [
         "irrelevant_questions",
@@ -1593,4 +1734,3 @@ export const Constants = {
     },
   },
 } as const
-

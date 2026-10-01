@@ -132,3 +132,17 @@ BEGIN
   LIMIT p_limit;
 END;
 $$ LANGUAGE plpgsql STABLE;
+
+-- Anjo pilot: deny direct API execution of the functions defined above.
+-- Preserve access only for trusted server-side service_role calls.
+DO $anjo$
+DECLARE target regprocedure;
+BEGIN
+  FOR target IN SELECT p.oid::regprocedure FROM pg_proc p
+    JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND p.proname IN ('find_sessions_ordered_by_helpful_count','find_sessions_ordered_by_message_count','find_sessions_ordered_by_total_content_richness')
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated', target);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO service_role', target);
+  END LOOP;
+END $anjo$;

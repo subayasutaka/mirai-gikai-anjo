@@ -1,5 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { NextRequest } from "next/server";
 import {
+  middleware,
   isDevRoute,
   isHtmlAcceptHeader,
   isValidDifficultyLevel,
@@ -80,5 +82,54 @@ describe("isDevRoute", () => {
   it("その他のパスは対象外", () => {
     expect(isDevRoute("/")).toBe(false);
     expect(isDevRoute("/terms")).toBe(false);
+  });
+});
+
+describe("安城実証のアクセス制限", () => {
+  afterEach(() => vi.unstubAllEnvs());
+  it.each([
+    "/bills",
+    "/api/anjo-chat",
+    "/preview/bills/c875ef6b-65c9-4ed5-bdce-a0df9a79a923",
+  ])("%s はJSON/RSCでも認証が必要", async (path) => {
+    vi.stubEnv("BASIC_AUTH_USER", "test-user");
+    vi.stubEnv("BASIC_AUTH_PASSWORD", "test-password");
+    const response = await middleware(
+      new NextRequest(`https://example.test${path}`, {
+        headers: { Accept: "text/x-component" },
+      })
+    );
+    expect(response.status).toBe(401);
+  });
+  it("Vercel上の実証は認証設定が欠けると表示しない", async () => {
+    vi.stubEnv("BASIC_AUTH_USER", "");
+    vi.stubEnv("BASIC_AUTH_PASSWORD", "");
+    vi.stubEnv("VERCEL", "1");
+    vi.stubEnv("ANJO_PILOT_MODE", "true");
+    expect(
+      (await middleware(new NextRequest("https://example.test/bills"))).status
+    ).toBe(503);
+  });
+  it("認証済みでも旧APIの入口は開かない", async () => {
+    vi.stubEnv("BASIC_AUTH_USER", "test-user");
+    vi.stubEnv("BASIC_AUTH_PASSWORD", "test-password");
+    const response = await middleware(
+      new NextRequest("https://example.test/api/chat", {
+        headers: { Authorization: `Basic ${btoa("test-user:test-password")}` },
+      })
+    );
+    expect(response.status).toBe(404);
+  });
+  it("認証済みページにも索引禁止とキャッシュ抑制が付く", async () => {
+    vi.stubEnv("BASIC_AUTH_USER", "test-user");
+    vi.stubEnv("BASIC_AUTH_PASSWORD", "test-password");
+    const response = await middleware(
+      new NextRequest("https://example.test/bills", {
+        headers: { Authorization: `Basic ${btoa("test-user:test-password")}` },
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");
+    expect(response.headers.get("Cache-Control")).toContain("no-store");
   });
 });

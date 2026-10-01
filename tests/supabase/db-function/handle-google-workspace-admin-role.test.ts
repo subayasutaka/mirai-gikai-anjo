@@ -31,7 +31,7 @@ describe("apply_admin_role_if_eligible 関数", () => {
     createdUserIds.length = 0;
   });
 
-  it("team-mir.ai + Google ログインユーザーに admin ロールが付与される", async () => {
+  it("開発元ドメインのGoogleログインでも管理者権限を自動付与しない", async () => {
     const email = `test-google-${Date.now()}@team-mir.ai`;
     const userId = await createUserWithProvider(email, "google");
 
@@ -39,10 +39,10 @@ describe("apply_admin_role_if_eligible 関数", () => {
       "apply_admin_role_if_eligible",
       { target_user_id: userId }
     );
-    expect(applied).toBe(true);
+    expect(applied).toBe(false);
 
     const roles = await getUserRoles(userId);
-    expect(roles).toEqual(["admin"]);
+    expect(roles).toBeUndefined();
   });
 
   it("team-mir.ai 以外のドメイン + Google ログインユーザーには付与されない", async () => {

@@ -10,7 +10,7 @@ import {
   getBasicAuthConfig,
   validateBasicAuth,
 } from "./lib/basic-auth";
-import { updateSupabaseSession } from "./lib/supabase/middleware";
+import { isAnjoWebRoute } from "./features/anjo/shared/route-policy";
 
 /**
  * 開発用プレビュー（/dev 配下）のルートか判定する。
@@ -22,17 +22,12 @@ export function isDevRoute(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-  // /dev routes: 本番では404、開発ではauthスキップ
-  if (isDevRoute(request.nextUrl.pathname)) {
-    if (process.env.NODE_ENV !== "development") {
-      return NextResponse.rewrite(new URL("/not-found", request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Supabaseセッションをリフレッシュ（トークン期限切れ時に自動更新）
-  const response = await updateSupabaseSession(request);
-
+  if (!isAnjoWebRoute(request.nextUrl.pathname))
+    return new NextResponse("Not found", { status: 404 });
+  const response = NextResponse.next();
+  response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  response.headers.set("Referrer-Policy", "no-referrer");
+  response.headers.set("Cache-Control", "private, no-store");
   // URLパラメータからdifficulty Cookieをセット
   _applyDifficultyCookie(request, response);
 
@@ -40,11 +35,13 @@ export async function middleware(request: NextRequest) {
 
   // Basic認証の設定がない場合はスキップ
   if (!authConfig) {
+    if (process.env.VERCEL && process.env.ANJO_PILOT_MODE !== "false") {
+      return new NextResponse("非公式実証の準備中です。", { status: 503 });
+    }
     return response;
   }
 
-  // HTML ナビゲーションだけ認証（画像やJSON, css/js, fetch等は通す）
-  if (!_isHtmlRequest(request)) return response;
+  // 議案APIとRSCも同じ認証で保護する。
 
   // Basic認証の検証
   if (validateBasicAuth(request, authConfig)) {
@@ -95,11 +92,6 @@ function _applyDifficultyCookie(
 
 export function isHtmlAcceptHeader(accept: string): boolean {
   return accept.includes("text/html");
-}
-
-function _isHtmlRequest(request: NextRequest) {
-  const accept = request.headers.get("accept") || "";
-  return isHtmlAcceptHeader(accept);
 }
 
 export const config = {

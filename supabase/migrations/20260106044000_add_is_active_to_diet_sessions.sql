@@ -10,11 +10,11 @@ COMMENT ON COLUMN diet_sessions.is_active IS 'Whether this session is the active
 
 -- Atomic function to set a diet session as active
 -- This ensures only one session can be active at a time, avoiding race conditions
--- SECURITY DEFINER allows this function to bypass RLS restrictions
+-- Anjo fork (2026-09-12): only the server service role may switch sessions.
 CREATE OR REPLACE FUNCTION set_active_diet_session(target_session_id uuid)
 RETURNS void
 LANGUAGE plpgsql
-SECURITY DEFINER
+SECURITY INVOKER
 SET search_path = public
 AS $$
 BEGIN
@@ -26,3 +26,6 @@ BEGIN
   WHERE id IS NOT NULL;
 END;
 $$;
+
+REVOKE ALL ON FUNCTION set_active_diet_session(uuid) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION set_active_diet_session(uuid) TO service_role;

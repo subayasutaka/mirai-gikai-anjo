@@ -1,33 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const isDev = process.env.NODE_ENV === "development";
-const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
-
 export const metadata: Metadata = {
-  title: "みらい議会 Admin",
-  description: "みらい議会の管理者向けダッシュボード",
-  icons: {
-    icon: isDev
-      ? "/icons/pwa/icon_dev_192_v3.png"
-      : isStaging
-        ? "/icons/pwa/icon_staging_192.png"
-        : "/icons/pwa/icon_android_192.png",
-  },
+  title: "みらい議会＠安城 管理画面",
+  description: "みらい議会＠安城の運営者用管理画面",
+  robots: { index: false, follow: false },
+  icons: { icon: "/anjo-icon.svg" },
 };
 
 export default function RootLayout({
@@ -37,9 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={"antialiased"}>
         <NextTopLoader
           color="#3b82f6"
           initialPosition={0.08}
