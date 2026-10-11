@@ -110,6 +110,27 @@ export function BillFormFields({
             />
           ))}
         </div>
+        <FormField
+          control={control}
+          name="committee_omitted"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-3">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>本会議で委員会付託・審査を省略した</FormLabel>
+              </div>
+              <FormDescription>
+                公式の議決結果や会議録で省略を確認できたときだけチェックします。チェックすると「委員会質疑」の段階を「省略」と表示します。
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </fieldset>
       <FormField
         control={control}

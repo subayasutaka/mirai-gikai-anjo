@@ -23,6 +23,7 @@ const billBaseSchema = z.object({
   plenary_question_date: progressDateSchema,
   committee_question_date: progressDateSchema,
   vote_date: progressDateSchema,
+  committee_omitted: z.boolean(),
   name: z
     .string()
     .min(1, "議案名は必須です")

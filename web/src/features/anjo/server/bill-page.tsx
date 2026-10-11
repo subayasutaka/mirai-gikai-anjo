@@ -144,6 +144,7 @@ export async function AnjoBillPage({
       <AnjoProgress
         status={bill.status}
         note={bill.status_note}
+        committeeOmitted={bill.committee_omitted}
         dates={bill}
         documentName={bill.name}
       />

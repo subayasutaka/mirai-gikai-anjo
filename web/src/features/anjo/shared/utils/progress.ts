@@ -1,5 +1,9 @@
-export function isCommitteeOmitted(note?: string | null): boolean {
-  return /(?:^|[。\n])\s*委員会(?:への)?(?:付託|審査)(?:を|は)?省略(?:しました|しています|した|することに決定しました)?(?:[。\n]|$)/.test(
-    note || ""
-  );
+/** 委員会の段階（4段階のうち3番目）を「省略」と表示するか。 */
+export const COMMITTEE_STEP_INDEX = 2;
+
+export function isSkippedProgressStep(
+  index: number,
+  committeeOmitted?: boolean | null
+): boolean {
+  return committeeOmitted === true && index === COMMITTEE_STEP_INDEX;
 }

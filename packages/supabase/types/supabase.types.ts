@@ -196,6 +196,7 @@ export type Database = {
       }
       bills: {
         Row: {
+          committee_omitted: boolean
           committee_question_date: string | null
           created_at: string
           diet_session_id: string | null
@@ -223,6 +224,7 @@ export type Database = {
           vote_date: string | null
         }
         Insert: {
+          committee_omitted?: boolean
           committee_question_date?: string | null
           created_at?: string
           diet_session_id?: string | null
@@ -250,6 +252,7 @@ export type Database = {
           vote_date?: string | null
         }
         Update: {
+          committee_omitted?: boolean
           committee_question_date?: string | null
           created_at?: string
           diet_session_id?: string | null

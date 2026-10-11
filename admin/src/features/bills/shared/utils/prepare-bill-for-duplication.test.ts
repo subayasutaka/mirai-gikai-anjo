@@ -21,6 +21,7 @@ const baseBill: Bill = {
   introduction_date: null,
   plenary_question_date: null,
   committee_question_date: null,
+  committee_omitted: false,
   vote_date: null,
   share_thumbnail_url: null,
   shugiin_url: null,
