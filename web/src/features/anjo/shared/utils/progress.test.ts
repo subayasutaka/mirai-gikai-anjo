@@ -1,22 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { isCommitteeOmitted } from "./progress";
+import { COMMITTEE_STEP_INDEX, isSkippedProgressStep } from "./progress";
 
-describe("isCommitteeOmitted", () => {
-  it.each([
-    "2026年9月15日提出。委員会付託を省略。",
-    "委員会への付託は省略。",
-    "委員会審査を省略しました。",
-  ])("確定した省略を認識する: %s", (note) => {
-    expect(isCommitteeOmitted(note)).toBe(true);
+describe("isSkippedProgressStep", () => {
+  it("委員会省略が登録された議案では委員会の段階だけを省略する", () => {
+    expect(isSkippedProgressStep(COMMITTEE_STEP_INDEX, true)).toBe(true);
+    for (const index of [0, 1, 3]) {
+      expect(isSkippedProgressStep(index, true)).toBe(false);
+    }
   });
+
   it.each([
-    undefined,
+    false,
     null,
-    "",
-    "委員会付託を省略しない。",
-    "委員会付託を省略する予定です。",
-    "委員会付託を省略するかは未確認。",
-  ])("否定・予定・未確認は省略済みにしない: %s", (note) => {
-    expect(isCommitteeOmitted(note)).toBe(false);
+    undefined,
+  ])("委員会省略が登録されていなければ省略しない: %s", (committeeOmitted) => {
+    expect(isSkippedProgressStep(COMMITTEE_STEP_INDEX, committeeOmitted)).toBe(
+      false
+    );
   });
 });

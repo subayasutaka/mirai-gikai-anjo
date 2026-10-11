@@ -12,19 +12,21 @@ import {
   formatProgressDate,
 } from "@mirai-gikai/shared/anjo/progress-dates";
 import { Check, MapPin, Minus } from "lucide-react";
-import { isCommitteeOmitted } from "../shared/utils/progress";
+import { isSkippedProgressStep } from "../shared/utils/progress";
 import { AnjoMarkdown, Furigana } from "./furigana";
 import { ReadingText } from "./reading-text";
 
 export function AnjoProgress({
   status,
   note,
+  committeeOmitted,
   sessionName,
   dates,
   documentName = "",
 }: {
   status: string;
   note?: string | null;
+  committeeOmitted?: boolean | null;
   sessionName?: string;
   dates: AnjoProgressDates;
   documentName?: string;
@@ -53,7 +55,6 @@ export function AnjoProgress({
     );
   }
   const current = getAnjoProgressIndex(status);
-  const committeeOmitted = kind === "consent" && isCommitteeOmitted(note);
   const steps = ANJO_PROGRESS_STEPS.map((step, index) =>
     kind === "certification" && index === 2
       ? {
@@ -96,7 +97,7 @@ export function AnjoProgress({
       </div>
       <ol className="anjo-progress-steps">
         {steps.map((step, index) => {
-          const skipped = committeeOmitted && index === 2;
+          const skipped = isSkippedProgressStep(index, committeeOmitted);
           const date = dates[step.dateField];
           const dateLabel = formatProgressDate(date);
           return (

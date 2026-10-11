@@ -29,6 +29,7 @@ const makeBill = (
   introduction_date: null,
   plenary_question_date: null,
   committee_question_date: null,
+  committee_omitted: false,
   vote_date: null,
   status_order: BILL_STATUS_ORDER.introduced,
   publish_status_order: 2,
