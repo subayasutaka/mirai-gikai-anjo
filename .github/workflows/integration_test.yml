@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "pnpm"
 
       - name: Install dependencies
@@ -49,10 +49,13 @@ jobs:
                     -e 's/^SECRET_KEY="\(.*\)"$/SUPABASE_SECRET_KEY=\1/'
           } >> "$GITHUB_ENV"
 
-      - name: Run Integration Tests with Coverage
-        run: pnpm test:integration:coverage
+      - name: Run Anjo Integration Tests
+        run: pnpm test:integration:anjo
+        env:
+          ANJO_RUN_INITIAL_DB_TESTS: "true"
 
       - name: Upload coverage to Codecov
+        if: vars.ANJO_ENABLE_CODECOV == 'true'
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           files: ./web/coverage-integration/coverage-final.json

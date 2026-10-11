@@ -7,27 +7,21 @@ CREATE OR REPLACE FUNCTION publish_topic_analysis_version(p_version_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
 AS $$
-DECLARE
-  v_bill_id UUID;
 BEGIN
-  SELECT bill_id INTO v_bill_id
-  FROM topic_analysis_version
-  WHERE id = p_version_id;
-
-  IF v_bill_id IS NULL THEN
-    RAISE EXCEPTION 'topic_analysis_version % not found', p_version_id;
-  END IF;
-
-  -- 先に同 bill の現公開版を降ろす（同一トランザクション内なので部分ユニーク制約に衝突しない）
-  UPDATE topic_analysis_version
-  SET is_published = false
-  WHERE bill_id = v_bill_id
-    AND is_published = true
-    AND id <> p_version_id;
-
-  -- 対象を公開
-  UPDATE topic_analysis_version
-  SET is_published = true
-  WHERE id = p_version_id;
+  RAISE EXCEPTION 'Topic publication is disabled in the Anjo pilot';
 END;
 $$;
+
+-- Anjo pilot: deny direct API execution of the functions defined above.
+-- Preserve access only for trusted server-side service_role calls.
+DO $anjo$
+DECLARE target regprocedure;
+BEGIN
+  FOR target IN SELECT p.oid::regprocedure FROM pg_proc p
+    JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND p.proname IN ('publish_topic_analysis_version')
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated', target);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO service_role', target);
+  END LOOP;
+END $anjo$;

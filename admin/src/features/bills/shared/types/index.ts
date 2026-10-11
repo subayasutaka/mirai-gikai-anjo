@@ -1,3 +1,4 @@
+import { ANJO_STATUS_LABELS } from "@mirai-gikai/shared/anjo/config";
 import type { Database } from "@mirai-gikai/supabase";
 
 export type Bill = Database["public"]["Tables"]["bills"]["Row"];
@@ -52,6 +53,7 @@ export const BILL_STATUS_ORDER: Record<BillStatus, number> = {
 
 // House display mapping
 export const HOUSE_LABELS: Record<OriginatingHouse, string> = {
+  ANJO: "安城市議会",
   HR: "衆議院",
   HC: "参議院",
 };
@@ -61,6 +63,7 @@ export function getBillStatusLabel(
   status: BillStatus,
   originatingHouse?: OriginatingHouse | null
 ): string {
+  if (originatingHouse === "ANJO") return ANJO_STATUS_LABELS[status];
   switch (status) {
     case "preparing":
       return "準備中";

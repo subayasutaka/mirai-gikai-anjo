@@ -15,6 +15,8 @@ export const routes = {
   developersOpenDataApi: () => "/developers/open-data-api" as const,
   interviewDataTerms: () => "/developers/interview-data-terms" as const,
 
+  topicDetail: (id: string) => `/contents/${id}` as const,
+
   // ── 議案 ──────────────────────────────────────────
   billsList: () => "/bills" as const,
   billDetail: (billId: string) => `/bills/${billId}` as const,

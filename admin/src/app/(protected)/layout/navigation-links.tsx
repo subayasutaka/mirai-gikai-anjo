@@ -7,12 +7,11 @@ import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 const navigationLinks = [
+  { href: routes.topics(), label: "暮らしの内容" },
   { href: routes.bills(), label: "議案管理" },
-  { href: routes.dietSessions(), label: "国会会期管理" },
+  { href: routes.dietSessions(), label: "会期管理" },
   { href: routes.tags(), label: "タグ管理" },
-  { href: routes.interviews(), label: "インタビュー" },
-  // 全議案トピック分析(/user-topic-analysis)は隠し機能のためヘッダーに出さない（URL直アクセスのみ）。
-  { href: routes.experts(), label: "有識者" },
+  { href: routes.pilot(), label: "実証の記録と設定" },
   { href: routes.admins(), label: "管理者" },
 ];
 

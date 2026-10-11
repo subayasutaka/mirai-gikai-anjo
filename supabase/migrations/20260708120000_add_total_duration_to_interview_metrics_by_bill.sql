@@ -61,3 +61,17 @@ $$;
 
 comment on function get_interview_metrics_by_bill(uuid) is
   '議案ごとのAIインタビュー実施数・完了数・完了率・総回答時間（秒）を集計する。論理削除済み設定は除外。p_bill_idで単一議案に絞り込める。';
+
+-- Anjo pilot: deny direct API execution of the functions defined above.
+-- Preserve access only for trusted server-side service_role calls.
+DO $anjo$
+DECLARE target regprocedure;
+BEGIN
+  FOR target IN SELECT p.oid::regprocedure FROM pg_proc p
+    JOIN pg_namespace n ON n.oid=p.pronamespace
+    WHERE n.nspname='public' AND p.proname IN ('get_interview_metrics_by_bill')
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC, anon, authenticated', target);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO service_role', target);
+  END LOOP;
+END $anjo$;

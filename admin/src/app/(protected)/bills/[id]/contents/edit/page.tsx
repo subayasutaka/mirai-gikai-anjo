@@ -28,7 +28,13 @@ export default async function BillContentsEditPage({
       <h1 className="text-2xl font-bold text-gray-900 mb-6">
         議案コンテンツ編集
       </h1>
-      <BillContentsEditForm bill={bill} billContents={billContents} />
+      <BillContentsEditForm
+        bill={bill}
+        billContents={billContents}
+        localAudioEnabled={
+          !process.env.VERCEL && !!process.env.ANJO_WHISPER_MODEL
+        }
+      />
     </div>
   );
 }

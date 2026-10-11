@@ -65,3 +65,7 @@ describe("getJapanTime", () => {
     vi.useRealTimers();
   });
 });
+
+it("formats a Supabase timestamp at the JST day boundary", () => {
+  expect(formatDateWithDots("2026-08-31T15:00:00+00:00")).toBe("2026.9.1");
+});
