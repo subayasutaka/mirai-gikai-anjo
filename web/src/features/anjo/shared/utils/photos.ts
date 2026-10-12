@@ -47,19 +47,20 @@ export const ANJO_PHOTOS = {
   },
   recycling: {
     src: "/anjo/photos/recycling.jpg",
-    alt: "分別用の容器",
-    author: "Polina Tankilevitch",
-    source: "https://www.pexels.com/photo/recycling-bins-3735212/",
+    alt: "並んだごみ収集車",
+    author: "RDNE Stock project",
+    source:
+      "https://www.pexels.com/photo/dirty-trucks-seen-from-above-8783849/",
     license: "https://www.pexels.com/license/",
-    checkedOn: "2026-09-30",
+    checkedOn: "2026-10-12",
   },
   parking: {
     src: "/anjo/photos/parking.jpg",
-    alt: "駐車場の区画",
-    author: "Ellie Burgin",
-    source: "https://www.pexels.com/photo/empty-spaces-of-parking-lot-8910523/",
+    alt: "車が並ぶ屋外の駐車場",
+    author: "Tony Wu",
+    source: "https://www.pexels.com/photo/cars-parked-on-parking-lot-17051849/",
     license: "https://www.pexels.com/license/",
-    checkedOn: "2026-09-30",
+    checkedOn: "2026-10-12",
   },
   land: {
     src: "/anjo/photos/land.jpg",
@@ -209,14 +210,14 @@ export const ANJO_PHOTOS = {
     license: "https://www.pexels.com/license/",
     checkedOn: "2026-09-30",
   },
-  supply: {
-    src: "/anjo/photos/supply.jpg",
-    alt: "青空を背景にした給水塔",
-    author: "Abderrahmane Habibi",
+  savings: {
+    src: "/anjo/photos/savings.jpg",
+    alt: "硬貨の入ったびんと芽",
+    author: "Towfiqu barbhuiya",
     source:
-      "https://www.pexels.com/photo/modern-water-tower-against-clear-blue-sky-31581981/",
+      "https://www.pexels.com/photo/close-up-shot-of-a-jar-with-coins-9755390/",
     license: "https://www.pexels.com/license/",
-    checkedOn: "2026-09-30",
+    checkedOn: "2026-10-12",
   },
   donation: {
     src: "/anjo/photos/donation.jpg",
@@ -235,14 +236,14 @@ export const ANJO_PHOTOS = {
     license: "https://www.pexels.com/license/",
     checkedOn: "2026-09-30",
   },
-  lunch: {
-    src: "/anjo/photos/lunch.jpg",
-    alt: "ご飯と野菜のお皿",
-    author: "I Own My Food Art",
+  tableware: {
+    src: "/anjo/photos/tableware.jpg",
+    alt: "子ども用の食器",
+    author: "Tara Winstead",
     source:
-      "https://www.pexels.com/photo/rice-and-vegetables-with-lime-in-white-ceramic-plate-8992927/",
+      "https://www.pexels.com/photo/blue-plastic-spoon-on-red-round-plate-7123073/",
     license: "https://www.pexels.com/license/",
-    checkedOn: "2026-09-30",
+    checkedOn: "2026-10-12",
   },
   tapwater: {
     src: "/anjo/photos/tapwater.jpg",
@@ -296,7 +297,7 @@ export const ANJO_CASE_PHOTOS: Readonly<
   "56b48b12-bb3f-45c9-a342-7b62ae46d6eb": "flowers",
   "53710057-eb48-442d-b253-5c3bc0a21e11": "pipes",
   "db0883c2-ceb2-45d9-8a76-ca5be281a81d": "recycling",
-  "39196a19-b908-43d6-8f42-f0e867810921": "supply",
+  "39196a19-b908-43d6-8f42-f0e867810921": "savings",
   "4243ec3d-0552-48b7-a1f3-be7d624f890c": "budget",
   "78ebf032-4b8e-4951-b48c-e050566a1bdd": "health",
   "120cd851-4bb1-40f6-8971-4b01dfd56d11": "land",
@@ -313,7 +314,7 @@ export const ANJO_CASE_PHOTOS: Readonly<
   "f40982fe-ff3d-4385-9376-49d329fcd243": "technology",
   "100df356-4b10-456f-af41-e084b80fff0d": "donation",
   "fcc43cdb-4fb1-4efd-9f77-a3def423073d": "meal",
-  "9ec99797-ed44-403f-89e8-a9c832a00936": "lunch",
+  "9ec99797-ed44-403f-89e8-a9c832a00936": "tableware",
   "0712cb49-1ae7-46f6-bcda-3d463862391d": "tapwater",
   "67dcc65c-6c2f-4702-9c39-ac4b6c50a26a": "gym",
   "8b8831c9-3181-48fb-b757-4c50828ac2bc": "refund",
