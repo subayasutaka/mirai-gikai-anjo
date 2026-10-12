@@ -28,3 +28,13 @@ it("同じ種類の質疑を追記しても両方の記録と出典を維持す�
   expect(x.records.議案質疑).toContain("出典A");
   expect(x.records.議案質疑).toContain("出典B");
 });
+
+it("討論を質疑とは別の記録として取り出す", () => {
+  const x = splitDeliberations(
+    "## 内容\n本文\n\n## 議案質疑\n質問と答弁。\n\n## 討論\n### 議員A（賛成）\n理由です。\n\n## 出典\n資料"
+  );
+  expect(x.body).not.toContain("理由です。");
+  expect(x.body).toContain("## 出典");
+  expect(x.records.討論).toContain("議員A（賛成）");
+  expect(x.records.議案質疑).toBe("質問と答弁。");
+});
