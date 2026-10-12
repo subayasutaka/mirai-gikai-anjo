@@ -112,6 +112,80 @@ export function BillFormFields({
         </div>
         <FormField
           control={control}
+          name="plenary_no_questions"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-3">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>本会議の議案質疑で質問はなかった</FormLabel>
+              </div>
+              <FormDescription>
+                会議録や中継で、質疑の申し出がなかったことを確認できたときだけチェックします。「議案質疑」の日付とあわせて「質問はありませんでした」と表示します。
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField
+            control={control}
+            name="committee_count"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>分けて審査した委員会の数</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={2}
+                    max={10}
+                    value={field.value ?? ""}
+                    onChange={(event) =>
+                      field.onChange(
+                        event.target.value === ""
+                          ? null
+                          : Number(event.target.value)
+                      )
+                    }
+                  />
+                </FormControl>
+                <FormDescription>
+                  補正予算などを複数の委員会に分けて付託した場合だけ入力します。1つの委員会なら空欄です。
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="committee_question_end_date"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>委員会審査の最終日</FormLabel>
+                <FormControl>
+                  <Input
+                    type="date"
+                    {...field}
+                    value={field.value ?? ""}
+                    onChange={(event) =>
+                      field.onChange(event.target.value || null)
+                    }
+                  />
+                </FormControl>
+                <FormDescription>
+                  分けて審査した場合の最後の審査日です。「委員会質疑の日付」には最初の審査日を入れます。
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <FormField
+          control={control}
           name="committee_omitted"
           render={({ field }) => (
             <FormItem>

@@ -36,6 +36,9 @@ export function BillCreateForm({ dietSessions }: BillCreateFormProps) {
       committee_question_date: null,
       vote_date: null,
       committee_omitted: false,
+      plenary_no_questions: false,
+      committee_question_end_date: null,
+      committee_count: null,
       submitted_date: new Date().toLocaleDateString("sv-SE", {
         timeZone: "Asia/Tokyo",
       }),

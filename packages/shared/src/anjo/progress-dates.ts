@@ -17,3 +17,14 @@ export function formatProgressDate(value?: string | null): string | null {
   const weekday = "日月火水木金土"[date.getUTCDay()];
   return `${date.getUTCMonth() + 1}月${date.getUTCDate()}日（${weekday}）`;
 }
+
+/** 複数の委員会で分けて審査した場合など、期間で示す日程。 */
+export function formatProgressDateRange(
+  start?: string | null,
+  end?: string | null
+): string | null {
+  const startLabel = formatProgressDate(start);
+  if (!startLabel) return null;
+  const endLabel = formatProgressDate(end);
+  return endLabel && end !== start ? `${startLabel}〜${endLabel}` : startLabel;
+}
