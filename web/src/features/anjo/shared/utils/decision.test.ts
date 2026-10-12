@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { anjoDecision, decisionDate, decisionSource } from "./decision";
+import {
+  anjoDecision,
+  consentAction,
+  decisionDate,
+  decisionSource,
+} from "./decision";
 
 describe("議決結果の表示", () => {
   it("議案・同意・認定の結果を区別する", () => {
@@ -34,4 +39,27 @@ it("報告は誤って採決日が入っていても提出日を使い、予定�
   expect(decisionDate("第65号議案", "enacted", dates)).toBe("2026-09-15");
   expect(decisionDate("第65号議案", "rejected", dates)).toBe("2026-09-15");
   expect(decisionDate("第65号議案", "preparing", dates)).toBeNull();
+});
+
+describe("consentAction", () => {
+  it.each([
+    ["同意第5号 固定資産評価審査委員会委員の選任について", "選任"],
+    ["同意第6号 教育委員会委員の任命について", "任命"],
+    ["同意第9号", "選任・任命"],
+  ])("%s は「%s」と表示する", (name, expected) => {
+    expect(consentAction(name)).toBe(expected);
+  });
+
+  it("結果の説明文に議案名の言葉を使う", () => {
+    expect(
+      anjoDecision(
+        "同意第5号 固定資産評価審査委員会委員の選任について",
+        "enacted"
+      ).explanation
+    ).toBe("議会が委員の選任に同意しました。");
+    expect(
+      anjoDecision("同意第6号 教育委員会委員の任命について", "rejected")
+        .explanation
+    ).toBe("議会は委員の任命に同意しませんでした。");
+  });
 });

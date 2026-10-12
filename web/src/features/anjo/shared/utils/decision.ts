@@ -32,8 +32,8 @@ export function anjoDecision(name: string, status: string) {
     explanation:
       kind === "consent"
         ? positive
-          ? "議会が委員の任命に同意しました。"
-          : "議会は委員の任命に同意しませんでした。"
+          ? `議会が委員の${consentAction(name)}に同意しました。`
+          : `議会は委員の${consentAction(name)}に同意しませんでした。`
         : kind === "certification"
           ? positive
             ? "議会が決算を認定しました。"
@@ -42,6 +42,13 @@ export function anjoDecision(name: string, status: string) {
             ? "議会で案が認められました。"
             : "議会で案が認められませんでした。",
   } as const;
+}
+
+/** 人事同意案の議案名から「選任」「任命」を判別する。どちらもなければ併記する。 */
+export function consentAction(name: string): string {
+  if (name.includes("選任")) return "選任";
+  if (name.includes("任命")) return "任命";
+  return "選任・任命";
 }
 
 export function decisionSource(text: string) {
