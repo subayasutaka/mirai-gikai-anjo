@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { formatProgressDate, isProgressDate } from "./progress-dates";
+import {
+  formatProgressDate,
+  formatProgressDateRange,
+  isProgressDate,
+} from "./progress-dates";
 
 describe("milestone civil dates", () => {
   it.each([
@@ -29,3 +33,23 @@ describe("milestone civil dates", () => {
     expect(formatProgressDate(undefined)).toBeNull();
   });
 });
+
+describe("formatProgressDateRange", () => {
+  it("最終日があれば期間で示す", () => {
+    expect(formatProgressDateRange("2026-09-04", "2026-09-09")).toBe(
+      "9月4日（金）〜9月9日（水）"
+    );
+  });
+
+  it.each([
+    [null, "2026-09-09"],
+    ["2026-09-04", null],
+    ["2026-09-04", "2026-09-04"],
+    ["2026-09-04", "invalid"],
+  ])("開始日だけで示すか、開始日がなければ未確認にする: %s〜%s", (start, end) => {
+    expect(formatProgressDateRange(start, end)).toBe(
+      formatProgressDate(start)
+    );
+  });
+});
+

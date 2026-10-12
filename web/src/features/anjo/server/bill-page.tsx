@@ -145,6 +145,9 @@ export async function AnjoBillPage({
         status={bill.status}
         note={bill.status_note}
         committeeOmitted={bill.committee_omitted}
+        plenaryNoQuestions={bill.plenary_no_questions}
+        committeeCount={bill.committee_count}
+        committeeEndDate={bill.committee_question_end_date}
         dates={bill}
         documentName={bill.name}
       />

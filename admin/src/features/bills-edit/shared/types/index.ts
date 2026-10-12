@@ -24,6 +24,15 @@ const billBaseSchema = z.object({
   committee_question_date: progressDateSchema,
   vote_date: progressDateSchema,
   committee_omitted: z.boolean(),
+  plenary_no_questions: z.boolean(),
+  committee_question_end_date: progressDateSchema,
+  committee_count: z
+    .number()
+    .int()
+    .min(2, "委員会の数は2以上で入力してください")
+    .max(10, "委員会の数は10以下で入力してください")
+    .nullable()
+    .optional(),
   name: z
     .string()
     .min(1, "議案名は必須です")

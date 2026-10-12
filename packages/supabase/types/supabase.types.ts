@@ -196,8 +196,10 @@ export type Database = {
       }
       bills: {
         Row: {
+          committee_count: number | null
           committee_omitted: boolean
           committee_question_date: string | null
+          committee_question_end_date: string | null
           created_at: string
           diet_session_id: string | null
           id: string
@@ -207,6 +209,7 @@ export type Database = {
           knowledge_source: string | null
           name: string
           originating_house: Database["public"]["Enums"]["house_enum"]
+          plenary_no_questions: boolean
           plenary_question_date: string | null
           publish_status: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order: number | null
@@ -224,8 +227,10 @@ export type Database = {
           vote_date: string | null
         }
         Insert: {
+          committee_count?: number | null
           committee_omitted?: boolean
           committee_question_date?: string | null
+          committee_question_end_date?: string | null
           created_at?: string
           diet_session_id?: string | null
           id?: string
@@ -235,6 +240,7 @@ export type Database = {
           knowledge_source?: string | null
           name: string
           originating_house: Database["public"]["Enums"]["house_enum"]
+          plenary_no_questions?: boolean
           plenary_question_date?: string | null
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null
@@ -252,8 +258,10 @@ export type Database = {
           vote_date?: string | null
         }
         Update: {
+          committee_count?: number | null
           committee_omitted?: boolean
           committee_question_date?: string | null
+          committee_question_end_date?: string | null
           created_at?: string
           diet_session_id?: string | null
           id?: string
@@ -263,6 +271,7 @@ export type Database = {
           knowledge_source?: string | null
           name?: string
           originating_house?: Database["public"]["Enums"]["house_enum"]
+          plenary_no_questions?: boolean
           plenary_question_date?: string | null
           publish_status?: Database["public"]["Enums"]["bill_publish_status"]
           publish_status_order?: number | null

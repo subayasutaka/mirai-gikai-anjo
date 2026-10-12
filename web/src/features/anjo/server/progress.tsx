@@ -10,9 +10,14 @@ import {
 import {
   type AnjoProgressDates,
   formatProgressDate,
+  formatProgressDateRange,
 } from "@mirai-gikai/shared/anjo/progress-dates";
 import { Check, MapPin, Minus } from "lucide-react";
-import { isSkippedProgressStep } from "../shared/utils/progress";
+import {
+  COMMITTEE_STEP_INDEX,
+  describeCommitteeSplit,
+  isSkippedProgressStep,
+} from "../shared/utils/progress";
 import { AnjoMarkdown, Furigana } from "./furigana";
 import { ReadingText } from "./reading-text";
 
@@ -20,6 +25,9 @@ export function AnjoProgress({
   status,
   note,
   committeeOmitted,
+  plenaryNoQuestions,
+  committeeCount,
+  committeeEndDate,
   sessionName,
   dates,
   documentName = "",
@@ -27,6 +35,9 @@ export function AnjoProgress({
   status: string;
   note?: string | null;
   committeeOmitted?: boolean | null;
+  plenaryNoQuestions?: boolean | null;
+  committeeCount?: number | null;
+  committeeEndDate?: string | null;
   sessionName?: string;
   dates: AnjoProgressDates;
   documentName?: string;
@@ -99,7 +110,14 @@ export function AnjoProgress({
         {steps.map((step, index) => {
           const skipped = isSkippedProgressStep(index, committeeOmitted);
           const date = dates[step.dateField];
-          const dateLabel = formatProgressDate(date);
+          const split =
+            index === COMMITTEE_STEP_INDEX
+              ? describeCommitteeSplit(committeeCount)
+              : null;
+          const noQuestions = index === 1 && plenaryNoQuestions === true;
+          const dateLabel = split
+            ? formatProgressDateRange(date, committeeEndDate)
+            : formatProgressDate(date);
           return (
             <li
               key={step.label}
@@ -166,15 +184,27 @@ export function AnjoProgress({
                   normal={
                     skipped
                       ? "委員会での審査を省略"
-                      : index === 0
-                        ? "議会に案を出す"
-                        : index === 1
-                          ? "議員が内容を確かめる"
-                          : index === 2
-                            ? "担当の委員会で詳しく調べる"
-                            : "賛成・反対を決める"
+                      : noQuestions
+                        ? "質問はありませんでした"
+                        : split
+                          ? split.normal
+                          : index === 0
+                            ? "議会に案を出す"
+                            : index === 1
+                              ? "議員が内容を確かめる"
+                              : index === 2
+                                ? "担当の委員会で詳しく調べる"
+                                : "賛成・反対を決める"
                   }
-                  hard={skipped ? "本会議で委員会付託を省略" : step.description}
+                  hard={
+                    skipped
+                      ? "本会議で委員会付託を省略"
+                      : noQuestions
+                        ? "質疑の申し出なし"
+                        : split
+                          ? split.hard
+                          : step.description
+                  }
                 />
               </span>
               {!skipped && index === current && (

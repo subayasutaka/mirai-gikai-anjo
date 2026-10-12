@@ -42,6 +42,9 @@ export function BillEditForm({ bill, dietSessions }: BillEditFormProps) {
       committee_question_date: bill.committee_question_date,
       vote_date: bill.vote_date,
       committee_omitted: bill.committee_omitted,
+      plenary_no_questions: bill.plenary_no_questions,
+      committee_question_end_date: bill.committee_question_end_date,
+      committee_count: bill.committee_count,
       submitted_date: bill.submitted_date
         ? new Date(bill.submitted_date).toLocaleDateString("sv-SE", {
             timeZone: "Asia/Tokyo",
