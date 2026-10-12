@@ -57,11 +57,23 @@ const OVERRIDES: Record<string, string> = {
   調理場: "ちょうりじょう",
   公図: "こうず",
   市外の方: "しがいのかた",
+  // 人名は議会中継の読み上げ・本人確認で確かめた読み。
+  河合友佳: "かわいゆか",
+  加藤滋伸: "かとうしげのぶ",
+  鈴木佳樹: "すずきよしき",
+  日本人学校: "にほんじんがっこう",
+  活か: "いか",
+  繰越明許費: "くりこしめいきょひ",
+  支出済額: "ししゅつずみがく",
+  税抜: "ぜいぬき",
+  要否: "ようひ",
+  採決日: "さいけつび",
+  "道路・橋": "どうろ・はし",
   以上の方: "いじょうのかた",
   未満の方: "みまんのかた",
 };
 const overridePattern = new RegExp(
-  `(\\d{1,2}月(?:分|\\d{1,2}日(?:（[日月火水木金土]）)?)?|${Object.keys(
+  `(\\d{1,2}月(?:分|\\d{1,2}日(?:（[日月火水木金土]）)?)?|(?<=[・〜])\\d{1,2}日(?:（[日月火水木金土]）)?|${Object.keys(
     OVERRIDES
   )
     .sort((a, b) => b.length - a.length)
@@ -77,8 +89,9 @@ export function readingSegments(
     .split(overridePattern)
     .filter(Boolean)
     .flatMap((part) => {
+      // 「9月4日・7日」の「7日」のように、月を省いた日付も同じ読み方にする。
       const date = part.match(
-        /^(\d{1,2})月(?:(\d{1,2})日(?:（([日月火水木金土])）)?|(分))?$/
+        /^(?:(\d{1,2})月)?(?:(\d{1,2})日(?:（([日月火水木金土])）)?|(分))?$/
       );
       if (date) {
         const months = [
@@ -123,9 +136,12 @@ export function readingSegments(
           "はち",
           "く",
         ];
-        const month = months[Number(date[1])];
+        const month = date[1] ? months[Number(date[1])] : "";
         const day = Number(date[2]);
-        if (month && (!date[2] || (day >= 1 && day <= 31))) {
+        if (
+          (month || (!date[1] && date[2])) &&
+          (!date[2] || (day >= 1 && day <= 31))
+        ) {
           const dayReading = date[2]
             ? specialDays[day] ||
               `${day >= 20 ? digits[Math.floor(day / 10)] : ""}${day >= 10 ? "じゅう" : ""}${digits[day % 10]}にち`

@@ -26,6 +26,55 @@ beforeAll(async () => {
   );
 });
 
+describe("確認済みの固有名詞・語句の読み", () => {
+  it.each([
+    ["河合友佳", ["かわい", "ゆか"]],
+    ["加藤滋伸", ["かとう", "しげのぶ"]],
+    ["鈴木佳樹", ["すずき", "よしき"]],
+  ])("人名 %s を確認した読みで表示する", (name, readings) => {
+    const result = readingSegments(`委員の${name}氏`, (part) =>
+      tokenizer.tokenize(part)
+    );
+    expect(result).toContainEqual({ text: name, reading: readings.join("") });
+  });
+
+  it.each([
+    ["海外の日本人学校", "日本人学校", "にほんじんがっこう"],
+    ["税抜月額", "税抜", "ぜいぬき"],
+    ["申請の要否", "要否", "ようひ"],
+    ["今回の採決日", "採決日", "さいけつび"],
+    ["繰越明許費を設定", "繰越明許費", "くりこしめいきょひ"],
+    ["支出済額は0円", "支出済額", "ししゅつずみがく"],
+    ["道路・橋と河川", "道路・橋", "どうろ・はし"],
+  ])("%s の %s を %s と読む", (text, word, reading) => {
+    const result = readingSegments(text, (part) => tokenizer.tokenize(part));
+    expect(result.map((part) => part.text).join("")).toBe(text);
+    expect(
+      result
+        .filter((part) => word.includes(part.text) && part.reading)
+        .map((part) => part.reading)
+        .join("")
+    ).toBe(reading.replace("・", ""));
+  });
+
+  it("活かせる の 活 を い と読む", () => {
+    const result = readingSegments("解決に活かせる", (part) =>
+      tokenizer.tokenize(part)
+    );
+    expect(result).toContainEqual({ text: "活", reading: "い" });
+  });
+
+  it("月を省いた日付を日付として読む", () => {
+    const text = "9月4日・7日・8日・9日：分野ごと、1日10回";
+    const result = readingSegments(text, (part) => tokenizer.tokenize(part));
+    expect(result.map((part) => part.text).join("")).toBe(text);
+    expect(result).toContainEqual({ text: "7日", reading: "なのか" });
+    expect(result).toContainEqual({ text: "8日", reading: "ようか" });
+    expect(result).toContainEqual({ text: "9日", reading: "ここのか" });
+    expect(result).not.toContainEqual({ text: "1日", reading: "ついたち" });
+  });
+});
+
 describe("automatic local furigana", () => {
   it("reads cadastral maps as こうず in new council text", () => {
     const text = "公図・地番図を確認し、公図管理システムを更新する。";
