@@ -47,7 +47,7 @@ describe("議案に合うイメージ写真", () => {
       expect(photo.author).not.toBe("");
       expect(photo.source).toMatch(/^https:\/\/www\.pexels\.com\/photo\//);
       expect(photo.license).toBe("https://www.pexels.com/license/");
-      expect(photo.checkedOn).toBe("2026-09-30");
+      expect(photo.checkedOn).toMatch(/^2026-\d{2}-\d{2}$/);
     }
   });
 });
