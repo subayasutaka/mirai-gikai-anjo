@@ -15,16 +15,37 @@ import {
 } from "../shared/topic-navigation";
 import { decisionDate, decisionSource } from "../shared/utils/decision";
 import { splitDeliberations } from "../shared/utils/deliberations";
+import { splitOperatorStance } from "../shared/utils/operator-stance";
 import { BackToList } from "./back-to-list";
 import { AnjoDecision } from "./decision";
 import { AnjoDeliberations } from "./deliberations";
 import { AnjoMarkdown, Furigana } from "./furigana";
+import { AnjoOperatorStance } from "./operator-stance";
 import { AnjoProgress } from "./progress";
-import { ReadingText } from "./reading-text";
+import { ReadingMarkdown, ReadingText } from "./reading-text";
 import { getAnjoBill } from "./repository";
 import { ThemePhoto } from "./theme-photo";
 import { TopicCard } from "./topic-card";
 import { listAnjoTopics } from "./topic-repository";
+
+const POLICY_TEXT = {
+  normal: `このページは、市と議会が公開した資料や記録をもとに、安城市議会議員のすば康貴が書いています。
+
+- 議案の説明は、資料の中身を言いかえたものです。だれの賛成・反対の考えも入れていません。
+- 議員の質問や意見は、発言した議員全員を、発言した順に、同じ形で短くまとめています。すば康貴の発言も同じ形です。
+- 議員ごとの賛成・反対は、議会が公表した結果をそのまま写しています。
+- すば康貴自身の賛成・反対と理由は、「すば康貴の賛否と理由」の欄にだけ書いています。この欄は運営者の意見です。
+
+**選挙のとき**：運営者のすば康貴が立候補する選挙では、選挙が始まる日（告示日）から投票日までは、新しい記事や記録を載せません。この間に誤りが見つかったときは、直します。直したところと日付は、ページに残します。`,
+  hard: `このページは、出典に示した公開資料・記録に基づき、安城市議会議員すば康貴が作成した編集上の説明です。市や議会の公式見解ではありません。
+
+- 議案の説明：資料の内容の要約です。賛否や評価は含めていません。
+- 議案質疑・委員会質疑・討論・一般質問：発言者全員を、発言順・同一形式・同じ字数の目安で要約しています（すば康貴の発言を含む）。
+- 議員別の賛否：安城市議会の公式の議決結果の転記です。
+- 運営者すば康貴の賛否と理由は、「すば康貴の賛否と理由」欄にのみ掲載しています。同欄は運営者個人の意見です。
+
+**選挙時の運用**：運営者が立候補する選挙の告示日から投票日までの間は、新規の掲載・更新を行いません。ただし、誤りが判明した場合の訂正は行い、訂正箇所と訂正日をページに明記します。`,
+};
 
 export async function AnjoBillPage({
   id,
@@ -190,7 +211,9 @@ export async function AnjoBillPage({
                   <AnjoMarkdown>
                     {
                       splitDeliberations(
-                        content?.content || "説明文を準備しています。"
+                        splitOperatorStance(
+                          content?.content || "説明文を準備しています。"
+                        ).body
                       ).body
                     }
                   </AnjoMarkdown>
@@ -208,11 +231,21 @@ export async function AnjoBillPage({
                 ?.content || ""
             }
           />
+          <AnjoOperatorStance
+            normal={
+              bill.bill_contents.find((c) => c.difficulty_level === "normal")
+                ?.content || ""
+            }
+            hard={
+              bill.bill_contents.find((c) => c.difficulty_level === "hard")
+                ?.content || ""
+            }
+          />
           <section className="anjo-panel">
             <h2>
               <ReadingText
-                normal="もとになった資料と説明について"
-                hard="出典と説明の立場"
+                normal="このページの書き方"
+                hard="出典と掲載の方針"
               />
             </h2>
             {bill.shugiin_url && (
@@ -226,12 +259,12 @@ export async function AnjoBillPage({
                 <ExternalLink size={16} />
               </a>
             )}
-            <p>
-              <ReadingText
-                normal="このページは、もとになった資料や記録をわかりやすく説明しています。市が書いた説明や、すば康貴の賛否・政治的な意見とは区別しています。"
-                hard="このページは、出典に示した資料・記録に基づく編集上の説明です。市の公式見解そのものではありません。すば康貴の賛否・政治的見解は、「討論」欄に載せる本会議での討論の要約（ほかの議員と同じ形）を除き、掲載していません。"
+            <div className="anjo-markdown anjo-policy-text">
+              <ReadingMarkdown
+                normal={POLICY_TEXT.normal}
+                hard={POLICY_TEXT.hard}
               />
-            </p>
+            </div>
           </section>
         </div>
         <aside className="anjo-detail-aside">

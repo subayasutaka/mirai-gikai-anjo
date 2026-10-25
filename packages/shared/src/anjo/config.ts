@@ -3,7 +3,9 @@ export const ANJO_SITE = {
   operator: "すば康貴（安城市議会議員・無所属）",
   sourceCode: "https://github.com/subayasutaka/mirai-gikai-anjo",
   official: "https://anjo-shigikai.jp/know/result/r8/",
-  disclaimer: "すば康貴個人による非公式実証です。安城市・安城市議会の公式サービスではありません。これは政党チームみらいが運営しているものではありません。",
+  disclaimer: "すば康貴個人による非公式実証です。安城市・安城市議会の公式サービスではありません。これは政党チームみらいが運営しているものではありません。各議案の「すば康貴の賛否と理由」の欄は運営者の意見で、それ以外の欄は全議員同じ基準で書いています。",
+  // 公職選挙法第142条の3第3項の表示。公開するアドレスは未定のため仮の表示。
+  contact: "（未定・仮の表示）",
 } as const;
 
 export const ANJO_STATUS_LABELS: Record<string, string> = {

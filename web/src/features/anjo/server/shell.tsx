@@ -8,8 +8,8 @@ import {
   ReadingControls,
   ReadingPreferences,
 } from "../client/reading-preferences";
-import { ANJO_PHOTOS } from "../shared/utils/photos";
 import { CHAT_COPY } from "../shared/ui-text";
+import { ANJO_PHOTOS } from "../shared/utils/photos";
 import { Furigana, getMarkdownReadings } from "./furigana";
 
 const PHOTO_NOTE =
@@ -62,6 +62,9 @@ export async function AnjoShell({ children }: { children: ReactNode }) {
         </p>
         <p className="font-bold">
           <Furigana>{`運営：${ANJO_SITE.operator}`}</Furigana>
+        </p>
+        <p>
+          <Furigana>{`連絡先（電子メールアドレス）：${ANJO_SITE.contact}`}</Furigana>
         </p>
         <p>
           <Furigana>{ANJO_SITE.disclaimer}</Furigana>

@@ -373,6 +373,8 @@ button {
   --color-anjo-orange: #ef873e;
   --color-anjo-orange-light: #fff0e2;
   --color-anjo-shadow: #163e2910;
+  --color-anjo-opinion: #5b4a86;
+  --color-anjo-opinion-light: #f6f3fb;
 }
 .anjo-site {
   font-family:
@@ -1793,4 +1795,37 @@ button {
   .anjo-decision {
     padding: 18px;
   }
+}
+
+.anjo-operator-stance {
+  position: relative;
+  margin: 44px 0 26px;
+  padding: 24px;
+  border: 2px solid var(--color-anjo-opinion);
+  border-radius: 0 16px 16px 16px;
+  background: var(--color-anjo-opinion-light);
+}
+.anjo-operator-stance-tag {
+  position: absolute;
+  top: -30px;
+  left: -2px;
+  padding: 3px 14px;
+  border-radius: 8px 8px 0 0;
+  background: var(--color-anjo-opinion);
+  color: var(--color-anjo-white);
+  font-size: 13px;
+  font-weight: 700;
+}
+.anjo-operator-stance h2 {
+  color: var(--color-anjo-opinion);
+  font-size: 21px;
+  font-weight: 800;
+}
+.anjo-operator-stance-lead {
+  margin: 8px 0 12px;
+  color: var(--color-anjo-muted);
+  font-size: 13px;
+}
+.anjo-policy-text {
+  font-size: 13px;
 }
