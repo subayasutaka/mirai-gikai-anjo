@@ -3,6 +3,7 @@ import {
   getAnjoDocumentKind,
   isAnjoSubmissionPlanned,
 } from "@mirai-gikai/shared/anjo/document-kind";
+import { operatorStanceState } from "@mirai-gikai/shared/anjo/operator-stance";
 import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { formatDateWithDots } from "@/lib/utils/date";
@@ -14,11 +15,17 @@ import {
   topicQuery,
 } from "../shared/topic-navigation";
 import { decisionDate, decisionSource } from "../shared/utils/decision";
-import { splitDeliberations } from "../shared/utils/deliberations";
+import {
+  DELIBERATION_HEADINGS,
+  splitDeliberations,
+} from "../shared/utils/deliberations";
+import { hasOperatorDebate } from "../shared/utils/operator-stance";
 import { BackToList } from "./back-to-list";
 import { AnjoDecision } from "./decision";
 import { AnjoDeliberations } from "./deliberations";
 import { AnjoMarkdown, Furigana } from "./furigana";
+import { AnjoOperatorStance } from "./operator-stance";
+import { isOperatorStanceEnabled } from "./operator-stance-flag";
 import { AnjoProgress } from "./progress";
 import { ReadingText } from "./reading-text";
 import { getAnjoBill } from "./repository";
@@ -49,6 +56,26 @@ export async function AnjoBillPage({
   const query = topicQuery(
     readTopicSearch({ ...search, view: search.view || "bills" })
   );
+  const normalContent =
+    bill.bill_contents.find((c) => c.difficulty_level === "normal")?.content ||
+    "";
+  const hardContent =
+    bill.bill_contents.find((c) => c.difficulty_level === "hard")?.content ||
+    "";
+  const stance = isOperatorStanceEnabled()
+    ? (() => {
+        const records = [normalContent, hardContent].map(
+          (markdown) => splitDeliberations(markdown).records
+        );
+        return {
+          view: operatorStanceState(bill),
+          debated: hasOperatorDebate(records.map((r) => r.討論)),
+          hasRecords: records.some((r) =>
+            DELIBERATION_HEADINGS.some((heading) => r[heading])
+          ),
+        };
+      })()
+    : null;
   return (
     <article className="anjo-detail-page">
       <InitialDifficulty difficulty={difficulty} />
@@ -198,21 +225,23 @@ export async function AnjoBillPage({
               </section>
             );
           })}
-          <AnjoDeliberations
-            normal={
-              bill.bill_contents.find((c) => c.difficulty_level === "normal")
-                ?.content || ""
-            }
-            hard={
-              bill.bill_contents.find((c) => c.difficulty_level === "hard")
-                ?.content || ""
-            }
-          />
+          <AnjoDeliberations normal={normalContent} hard={hardContent} />
+          {stance && (
+            <AnjoOperatorStance
+              billName={bill.name}
+              view={stance.view}
+              debated={stance.debated}
+            />
+          )}
           <section className="anjo-panel">
             <h2>
               <ReadingText
-                normal="もとになった資料と説明について"
-                hard="出典と説明の立場"
+                {...(stance
+                  ? { normal: "このページの書き方", hard: "出典と掲載の方針" }
+                  : {
+                      normal: "もとになった資料と説明について",
+                      hard: "出典と説明の立場",
+                    })}
               />
             </h2>
             {bill.shugiin_url && (
@@ -226,12 +255,19 @@ export async function AnjoBillPage({
                 <ExternalLink size={16} />
               </a>
             )}
-            <p>
-              <ReadingText
-                normal="このページは、もとになった資料や記録をわかりやすく説明しています。市が書いた説明や、すば康貴の賛否・政治的な意見とは区別しています。"
-                hard="このページは、出典に示した資料・記録に基づく編集上の説明です。市の公式見解そのものではありません。すば康貴の賛否・政治的見解は、「討論」欄に載せる本会議での討論の要約（ほかの議員と同じ形）を除き、掲載していません。"
+            {stance ? (
+              <EditorialPolicy
+                hasRecords={stance.hasRecords}
+                hasStance={stance.view.state !== "hidden"}
               />
-            </p>
+            ) : (
+              <p>
+                <ReadingText
+                  normal="このページは、もとになった資料や記録をわかりやすく説明しています。市が書いた説明や、すば康貴の賛否・政治的な意見とは区別しています。"
+                  hard="このページは、出典に示した資料・記録に基づく編集上の説明です。市の公式見解そのものではありません。すば康貴の賛否・政治的見解は、「討論」欄に載せる本会議での討論の要約（ほかの議員と同じ形）を除き、掲載していません。"
+                />
+              </p>
+            )}
           </section>
         </div>
         <aside className="anjo-detail-aside">
@@ -251,5 +287,49 @@ export async function AnjoBillPage({
       </div>
       <BackToList query={query} bottom />
     </article>
+  );
+}
+
+/** 欄ごとの書き方。そのページに無い欄の行は出さない。 */
+function EditorialPolicy({
+  hasRecords,
+  hasStance,
+}: {
+  hasRecords: boolean;
+  hasStance: boolean;
+}) {
+  return (
+    <>
+      <p>
+        <ReadingText
+          normal="このページは、市と議会が公開した資料や記録をもとに、安城市議会議員のすば康貴が書いています。"
+          hard="このページは、出典に示した公開資料・記録に基づき、安城市議会議員すば康貴が作成した編集上の説明です。市や議会の公式見解ではありません。"
+        />
+      </p>
+      <ul className="anjo-policy-list">
+        <li>
+          <ReadingText
+            normal="議案の説明は、資料の中身を言いかえたものです。だれの賛成・反対の考えも入れていません。"
+            hard="議案の説明：資料の内容の要約です。賛否や評価は含めていません。"
+          />
+        </li>
+        {hasRecords && (
+          <li>
+            <ReadingText
+              normal="議員の質問や意見は、発言した議員全員を、発言した順に、同じ形で短くまとめています。すば康貴の発言も同じ形です。"
+              hard="議案質疑・委員会質疑・討論・一般質問：発言者全員を、発言順・同一形式・同じ字数の目安で要約しています（すば康貴の発言を含む）。"
+            />
+          </li>
+        )}
+        {hasStance && (
+          <li>
+            <ReadingText
+              normal="すば康貴自身の賛成・反対と理由は、「すば康貴の賛否と理由」の欄にだけ書いています。この欄は運営者の意見です。"
+              hard="運営者すば康貴の賛否と理由は、「すば康貴の賛否と理由」欄にのみ掲載しています。同欄は運営者個人の意見です。"
+            />
+          </li>
+        )}
+      </ul>
+    </>
   );
 }

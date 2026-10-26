@@ -1,5 +1,5 @@
 import "server-only";
-import { ANJO_SITE } from "@mirai-gikai/shared/anjo/config";
+import { ANJO_SITE, readContactEmail } from "@mirai-gikai/shared/anjo/config";
 import { Landmark } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -8,9 +8,10 @@ import {
   ReadingControls,
   ReadingPreferences,
 } from "../client/reading-preferences";
-import { ANJO_PHOTOS } from "../shared/utils/photos";
 import { CHAT_COPY } from "../shared/ui-text";
+import { ANJO_PHOTOS } from "../shared/utils/photos";
 import { Furigana, getMarkdownReadings } from "./furigana";
+import { isOperatorStanceEnabled } from "./operator-stance-flag";
 
 const PHOTO_NOTE =
   "写真は内容を伝えるための参考素材です。安城市の実際の施設や、案件の当事者を撮影したものではありません。";
@@ -27,6 +28,7 @@ export async function AnjoShell({ children }: { children: ReactNode }) {
       ...Object.values(ANJO_PHOTOS).map((photo) => photo.alt),
     ].join("\n\n")
   ).catch(() => ({}));
+  const contactEmail = readContactEmail(process.env.ANJO_CONTACT_EMAIL);
   return (
     <ReadingPreferences readings={{ ...readings }}>
       <a href="#main-content" className="sr-only focus:not-sr-only">
@@ -64,8 +66,18 @@ export async function AnjoShell({ children }: { children: ReactNode }) {
           <Furigana>{`運営：${ANJO_SITE.operator}`}</Furigana>
         </p>
         <p>
-          <Furigana>{ANJO_SITE.disclaimer}</Furigana>
+          <Furigana>
+            {isOperatorStanceEnabled()
+              ? `${ANJO_SITE.disclaimer}${ANJO_SITE.operatorStanceNote}`
+              : ANJO_SITE.disclaimer}
+          </Furigana>
         </p>
+        {contactEmail && (
+          <p>
+            <Furigana>{"運営者の連絡先："}</Furigana>
+            <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+          </p>
+        )}
         <p>
           <Furigana>
             説明文は公開資料をもとにCodexが下書きし、運営者が確認・更新します。原資料と異なる場合は原資料を優先してください。ふりがなは自動で付けるため、読みが正しくないことがあります。

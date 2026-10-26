@@ -135,6 +135,10 @@
     "./anjo/document-kind": {
       "types": "./src/anjo/document-kind.ts",
       "default": "./src/anjo/document-kind.ts"
+    },
+    "./anjo/operator-stance": {
+      "types": "./src/anjo/operator-stance.ts",
+      "default": "./src/anjo/operator-stance.ts"
     }
   },
   "dependencies": {

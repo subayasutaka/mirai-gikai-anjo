@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatProgressDate,
   formatProgressDateRange,
+  formatProgressDateWithYear,
   isProgressDate,
 } from "./progress-dates";
 
@@ -53,3 +54,11 @@ describe("formatProgressDateRange", () => {
   });
 });
 
+
+describe("年を含む日付", () => {
+  it("年月日で書き、形式が正しくなければ null", () => {
+    expect(formatProgressDateWithYear("2026-10-30")).toBe("2026年10月30日");
+    expect(formatProgressDateWithYear("2026-02-30")).toBeNull();
+    expect(formatProgressDateWithYear(null)).toBeNull();
+  });
+});

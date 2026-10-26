@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+  ANJO_SYSTEM_PROMPT,
+  ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE,
   createAnjoPrompt,
   estimateAnjoCost,
+  OPERATOR_STANCE_SOURCE_KEY,
   questionSchema,
 } from "./ai-policy";
 
@@ -88,5 +91,56 @@ describe("安城AIの入力・費用制限", () => {
     );
     expect(certification).toContain("採決・認定");
     expect(certification).not.toContain("原案可決");
+  });
+});
+
+describe("すば康貴の賛否と理由をAIに渡す", () => {
+  const bill = {
+    name: "認定第1号 令和7年度安城市一般会計歳入歳出決算について",
+    status: "enacted",
+    status_note: null,
+    knowledge_source: "決算の資料",
+  };
+  it("欄の文を参照資料とは別の項目として、原文のまま渡す", () => {
+    const prompt = createAnjoPrompt(
+      bill,
+      "すば議員の考えは？",
+      "賛否：反対\n理由：\n・理由A"
+    );
+    expect(prompt).toContain(
+      `"${OPERATOR_STANCE_SOURCE_KEY}":"賛否：反対\\n理由：\\n・理由A"`
+    );
+  });
+  it("欄の文がないときは項目自体を渡さない", () => {
+    expect(createAnjoPrompt(bill, "質問")).not.toContain(
+      OPERATOR_STANCE_SOURCE_KEY
+    );
+  });
+  it("欄を出すときの案内文は、言いかえずに引用させ、本人の見解はないとは言わせない", () => {
+    expect(ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE).toContain(
+      "言いかえず、要約せず、そのまま引用し"
+    );
+    expect(ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE).toContain(
+      "すば康貴は『…』と書いています"
+    );
+    expect(ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE).not.toContain(
+      "本人の政治的見解は含まれていない"
+    );
+    expect(ANJO_SYSTEM_PROMPT).toContain("本人の政治的見解は含まれていない");
+  });
+});
+
+describe("送る案内文で資料の長さを測る", () => {
+  it("長い案内文を送るときは、その長さを含めて上限を判定する", () => {
+    const bill = {
+      name: "条例案",
+      status: "introduced",
+      status_note: null,
+      knowledge_source: "あ".repeat(4000),
+    };
+    expect(() => createAnjoPrompt(bill, "質問")).not.toThrow();
+    expect(() =>
+      createAnjoPrompt(bill, "質問", undefined, "案".repeat(1500))
+    ).toThrow("source_too_long");
   });
 });
