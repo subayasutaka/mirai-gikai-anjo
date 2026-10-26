@@ -1,13 +1,14 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { routes } from "@/lib/routes";
 import { BillEditForm } from "@/features/bills-edit/client/components/bill-edit-form";
 import { BillTagsForm } from "@/features/bills-edit/client/components/bill-tags-form";
+import { OperatorStanceForm } from "@/features/bills-edit/client/components/operator-stance-form";
 import { getBillById } from "@/features/bills-edit/server/loaders/get-bill-by-id";
 import { getBillTagIds } from "@/features/bills-edit/server/loaders/get-bill-tag-ids";
 import { loadDietSessions } from "@/features/diet-sessions/server/loaders/load-diet-sessions";
 import { loadTags } from "@/features/tags/server/loaders/load-tags";
+import { routes } from "@/lib/routes";
 
 interface BillEditPageProps {
   params: Promise<{
@@ -53,9 +54,12 @@ export default async function BillEditPage({ params }: BillEditPageProps) {
 
       <div className="space-y-6">
         <BillEditForm bill={bill} dietSessions={dietSessions} />
-        <p className="text-sm text-gray-600">
-          すば康貴の賛否・政治的見解は未掲載です。
-        </p>
+        <OperatorStanceForm
+          billId={bill.id}
+          vote={bill.operator_vote}
+          reasons={bill.operator_reasons}
+          writtenOn={bill.operator_stance_written_on}
+        />
         <BillTagsForm
           billId={bill.id}
           allTags={allTags}

@@ -4,12 +4,24 @@ export const ANJO_SITE = {
   sourceCode: "https://github.com/subayasutaka/mirai-gikai-anjo",
   official: "https://anjo-shigikai.jp/know/result/r8/",
   disclaimer: "すば康貴個人による非公式実証です。安城市・安城市議会の公式サービスではありません。これは政党チームみらいが運営しているものではありません。",
+  operatorStanceNote: "各議案の「すば康貴の賛否と理由」の欄は運営者の意見で、それ以外の欄は全議員同じ基準で書いています。",
 } as const;
+
+/** 運営者の連絡先（公職選挙法第142条の3第3項の表示用）。形式が正しいときだけ出す。 */
+export function readContactEmail(value: string | undefined): string | null {
+  const email = value?.trim();
+  return email && /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(email) ? email : null;
+}
 
 export const ANJO_STATUS_LABELS: Record<string, string> = {
   preparing: "確認中", introduced: "上程", in_originating_house: "議案質疑",
   in_receiving_house: "委員会質疑", enacted: "採決・原案可決", rejected: "採決・否決",
 };
+
+/** 議決済み（可決・否決など）として扱う状態か。 */
+export function isAnjoDecidedStatus(status: string): boolean {
+  return status === "enacted" || status === "rejected";
+}
 
 export const ANJO_SOURCE_MAX_BYTES = 9000;
 

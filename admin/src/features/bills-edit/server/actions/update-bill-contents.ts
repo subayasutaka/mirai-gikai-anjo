@@ -1,7 +1,11 @@
 "use server";
-import { createAdminClient } from "@mirai-gikai/supabase";
+import {
+  ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE,
+  createAnjoPrompt,
+} from "@mirai-gikai/shared/anjo/ai-policy";
 import { ANJO_SOURCE_MAX_BYTES } from "@mirai-gikai/shared/anjo/config";
-import { createAnjoPrompt } from "@mirai-gikai/shared/anjo/ai-policy";
+import { operatorStanceForPrompt } from "@mirai-gikai/shared/anjo/operator-stance";
+import { createAdminClient } from "@mirai-gikai/supabase";
 import { requireAdmin } from "@/features/auth/server/lib/auth-server";
 import { mergeKnowledgeWithDeliberations } from "@/features/deliberations/shared/draft";
 import {
@@ -36,9 +40,12 @@ export async function updateBillContents(
       };
     if (bill.use_knowledge_source_in_chat && knowledge) {
       try {
+        // 「すば康貴の賛否と理由」欄を出した後も収まるよう、欄の文と長い方の案内文で測る。
         createAnjoPrompt(
           { ...bill, knowledge_source: knowledge },
-          "あ".repeat(500)
+          "あ".repeat(500),
+          operatorStanceForPrompt(bill),
+          ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE
         );
       } catch {
         return {

@@ -208,6 +208,9 @@ export type Database = {
           is_review_completed: boolean
           knowledge_source: string | null
           name: string
+          operator_reasons: string | null
+          operator_stance_written_on: string | null
+          operator_vote: string | null
           originating_house: Database["public"]["Enums"]["house_enum"]
           plenary_no_questions: boolean
           plenary_question_date: string | null
@@ -239,6 +242,9 @@ export type Database = {
           is_review_completed?: boolean
           knowledge_source?: string | null
           name: string
+          operator_reasons?: string | null
+          operator_stance_written_on?: string | null
+          operator_vote?: string | null
           originating_house: Database["public"]["Enums"]["house_enum"]
           plenary_no_questions?: boolean
           plenary_question_date?: string | null
@@ -270,6 +276,9 @@ export type Database = {
           is_review_completed?: boolean
           knowledge_source?: string | null
           name?: string
+          operator_reasons?: string | null
+          operator_stance_written_on?: string | null
+          operator_vote?: string | null
           originating_house?: Database["public"]["Enums"]["house_enum"]
           plenary_no_questions?: boolean
           plenary_question_date?: string | null

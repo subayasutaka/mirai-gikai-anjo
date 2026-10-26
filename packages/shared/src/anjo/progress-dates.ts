@@ -11,6 +11,13 @@ export function isProgressDate(value: string): boolean {
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
+/** 年を含む表記（例：2026年10月30日）。形式が正しくなければ null。 */
+export function formatProgressDateWithYear(value?: string | null): string | null {
+  if (!value || !isProgressDate(value)) return null;
+  const [year, month, day] = value.split("-").map(Number);
+  return `${year}年${month}月${day}日`;
+}
+
 export function formatProgressDate(value?: string | null): string | null {
   if (!value || !isProgressDate(value)) return null;
   const date = new Date(`${value}T00:00:00Z`);

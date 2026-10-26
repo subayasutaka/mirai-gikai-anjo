@@ -1,5 +1,10 @@
 import "server-only";
 import { createHmac, randomUUID } from "node:crypto";
+import { operatorStanceForPrompt } from "@mirai-gikai/shared/anjo/operator-stance";
+import {
+  createTopicPrompt,
+  topicStatusNote,
+} from "@mirai-gikai/shared/anjo/topics";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import { gateway, generateText } from "ai";
 import { type NextRequest, NextResponse } from "next/server";
@@ -7,16 +12,14 @@ import {
   ANJO_AI_MODEL,
   ANJO_AI_PROVIDER_OPTIONS,
   ANJO_SYSTEM_PROMPT,
+  ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE,
   createAnjoPrompt,
   MAX_OUTPUT_TOKENS,
   questionSchema,
 } from "../shared/ai-policy";
 import { executeAnjoAnswer } from "../shared/execute-answer";
 import { getMarkdownReadings } from "./furigana";
-import {
-  createTopicPrompt,
-  topicStatusNote,
-} from "@mirai-gikai/shared/anjo/topics";
+import { isOperatorStanceEnabled } from "./operator-stance-flag";
 import { listAnjoTopics } from "./topic-repository";
 
 async function fail(message: string, status: number) {
@@ -52,7 +55,7 @@ export async function answerAnjoQuestion(request: NextRequest) {
   const { data: bill, error } = await sb
     .from("bills")
     .select(
-      "id,name,status,status_note,knowledge_source,use_knowledge_source_in_chat"
+      "id,name,status,status_note,knowledge_source,use_knowledge_source_in_chat,operator_vote,operator_reasons,operator_stance_written_on"
     )
     .eq("id", parsed.data.billId)
     .eq("publish_status", "published")
@@ -64,6 +67,11 @@ export async function answerAnjoQuestion(request: NextRequest) {
     (!parsed.data.topicId && !bill.knowledge_source?.trim())
   )
     return fail("質問用の資料がまだ登録されていません。", 404);
+  // 欄の文を渡すのは議案への質問だけ。内容（トピック）への質問は今までの案内文のまま。
+  const system =
+    isOperatorStanceEnabled() && !parsed.data.topicId
+      ? ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE
+      : ANJO_SYSTEM_PROMPT;
   let prompt: string;
   try {
     if (parsed.data.topicId) {
@@ -85,7 +93,14 @@ export async function answerAnjoQuestion(request: NextRequest) {
         parsed.data.question
       );
     } else {
-      prompt = createAnjoPrompt(bill, parsed.data.question);
+      prompt = createAnjoPrompt(
+        bill,
+        parsed.data.question,
+        system === ANJO_SYSTEM_PROMPT_WITH_OPERATOR_STANCE
+          ? operatorStanceForPrompt(bill)
+          : undefined,
+        system
+      );
     }
   } catch {
     return fail("資料の長さを運営者が確認しています。", 503);
@@ -114,7 +129,7 @@ export async function answerAnjoQuestion(request: NextRequest) {
     generate: async () => {
       const generated = await generateText({
         model: gateway(ANJO_AI_MODEL),
-        system: ANJO_SYSTEM_PROMPT,
+        system,
         prompt,
         maxOutputTokens: MAX_OUTPUT_TOKENS,
         maxRetries: 0,

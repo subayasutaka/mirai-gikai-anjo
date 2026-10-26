@@ -36,6 +36,9 @@ const baseBill: Bill = {
   thumbnail_url: null,
   knowledge_source: null,
   use_knowledge_source_in_chat: false,
+  operator_vote: "for",
+  operator_reasons: "理由A",
+  operator_stance_written_on: "2026-10-30",
 };
 
 describe("prepareBillForDuplication", () => {
@@ -44,6 +47,13 @@ describe("prepareBillForDuplication", () => {
     expect(result).not.toHaveProperty("id");
     expect(result).not.toHaveProperty("created_at");
     expect(result).not.toHaveProperty("updated_at");
+  });
+
+  it("運営者の賛否と理由は引き継がない", () => {
+    const result = prepareBillForDuplication(baseBill);
+    expect(result.operator_vote).toBeNull();
+    expect(result.operator_reasons).toBeNull();
+    expect(result.operator_stance_written_on).toBeNull();
   });
 
   it("名前に「(複製)」を付与する", () => {

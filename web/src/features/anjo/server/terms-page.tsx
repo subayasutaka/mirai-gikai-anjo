@@ -1,5 +1,6 @@
 import "server-only";
 import { Furigana } from "./furigana";
+import { isOperatorStanceEnabled } from "./operator-stance-flag";
 export function AnjoInfoPage() {
   return (
     <article className="anjo-markdown">
@@ -22,9 +23,11 @@ export function AnjoInfoPage() {
       </p>
       <p>
         <Furigana>
-          {
-            "AIが答えられる範囲は登録資料に限ります。医療・法律など個別の専門判断や、未登録の政治的な見解を回答する用途には使いません。"
-          }
+          {`AIが答えられる範囲は登録資料に限ります。${
+            isOperatorStanceEnabled()
+              ? "医療・法律など個別の専門判断には使いません。運営者の意見は、各議案の「すば康貴の賛否と理由」の欄の文をそのまま引用して示します。"
+              : "医療・法律など個別の専門判断や、未登録の政治的な見解を回答する用途には使いません。"
+          }`}
         </Furigana>
       </p>
       <p>

@@ -1763,6 +1763,53 @@ button {
 .anjo-deliberations {
   margin: 26px 0;
 }
+/* 運営者の意見の欄。記録の欄と見分けられるよう破線の枠にし、賛否で色を変えない。 */
+.anjo-operator-stance {
+  margin: 26px 0;
+  padding: 22px 24px;
+  border: 2px dashed var(--color-anjo-navy);
+  border-radius: 16px;
+  background: var(--color-anjo-white);
+}
+.anjo-operator-stance h2 {
+  font-size: 23px;
+  font-weight: 800;
+}
+.anjo-operator-stance-eyebrow {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 2px 10px;
+  border: 1px solid var(--color-anjo-navy);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-anjo-navy);
+}
+.anjo-operator-stance > p {
+  margin-top: 12px;
+}
+.anjo-operator-stance-lead {
+  font-size: 13px;
+  color: var(--color-anjo-muted);
+}
+.anjo-operator-stance-vote {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-anjo-navy);
+}
+.anjo-operator-stance ul,
+.anjo-policy-list {
+  margin-top: 12px;
+  padding-left: 1.4em;
+  list-style: disc;
+}
+.anjo-operator-stance li + li,
+.anjo-policy-list li + li {
+  margin-top: 6px;
+}
+.anjo-policy-list {
+  font-size: 13px;
+}
 .anjo-deliberations h2 {
   font-size: 23px;
   font-weight: 800;
