@@ -132,4 +132,25 @@ describe("安城実証のアクセス制限", () => {
     expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");
     expect(response.headers.get("Cache-Control")).toContain("no-store");
   });
+  it("認証なしで公開した議案ページは検索エンジンに載せる", async () => {
+    vi.stubEnv("BASIC_AUTH_USER", "");
+    vi.stubEnv("BASIC_AUTH_PASSWORD", "");
+    vi.stubEnv("VERCEL", "1");
+    vi.stubEnv("ANJO_PILOT_MODE", "false");
+    const response = await middleware(
+      new NextRequest("https://example.test/bills")
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Robots-Tag")).toBeNull();
+  });
+  it("認証なしでも下書きの確認用ページは検索エンジンに載せない", async () => {
+    vi.stubEnv("BASIC_AUTH_USER", "");
+    vi.stubEnv("BASIC_AUTH_PASSWORD", "");
+    const response = await middleware(
+      new NextRequest(
+        "https://example.test/preview/bills/00000000-0000-0000-0000-000000000000?token=x"
+      )
+    );
+    expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");
+  });
 });

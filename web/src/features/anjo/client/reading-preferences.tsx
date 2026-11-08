@@ -34,7 +34,7 @@ export function RubyText({ children }: { children: string }) {
 }
 
 const ReadingContext = createContext({
-  detailed: false,
+  detailed: true,
   furigana: false,
   setDetailed: (_: boolean) => {},
   setFurigana: (_: boolean) => {},
@@ -47,7 +47,8 @@ export function ReadingPreferences({
   children: ReactNode;
   readings?: ReadingMap;
 }) {
-  const [detailed, setDetailed] = useState(false);
+  // 初めて開いたときは「くわしく」。?difficulty=normal のリンクなら「かんたん」。
+  const [detailed, setDetailed] = useState(true);
   const [furigana, setFurigana] = useState(false);
   useEffect(() => {
     try {

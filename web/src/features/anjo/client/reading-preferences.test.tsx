@@ -23,7 +23,7 @@ function renderSettings(difficulty?: string) {
 }
 
 describe("reading switches", () => {
-  it("starts easy and toggles detail and furigana independently without losing the question", () => {
+  it("starts detailed and toggles detail and furigana independently without losing the question", () => {
     const { container } = renderSettings();
     fireEvent.change(screen.getByRole("textbox"), {
       target: { value: "料金はいくら変わりますか？" },
@@ -32,14 +32,14 @@ describe("reading switches", () => {
       screen
         .getByRole("switch", { name: "くわしい説明に切り替え" })
         .getAttribute("aria-checked")
-    ).toBe("false");
+    ).toBe("true");
     fireEvent.click(
       screen.getByRole("switch", { name: "くわしい説明に切り替え" })
     );
     fireEvent.click(screen.getByRole("switch", { name: "ふりがなを表示" }));
     expect(
       container.querySelector(".anjo-site")?.getAttribute("data-detailed")
-    ).toBe("true");
+    ).toBe("false");
     expect(
       container.querySelector(".anjo-site")?.getAttribute("data-furigana")
     ).toBe("true");
@@ -64,6 +64,14 @@ describe("reading switches", () => {
         .getAllByRole("switch")
         .map((control) => control.getAttribute("aria-checked"))
     ).toEqual(["true", "true"]);
+  });
+  it("honors an explicit easy link", () => {
+    renderSettings("normal");
+    expect(
+      screen
+        .getByRole("switch", { name: "くわしい説明に切り替え" })
+        .getAttribute("aria-checked")
+    ).toBe("false");
   });
   it("still switches when browser storage is unavailable", () => {
     vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {

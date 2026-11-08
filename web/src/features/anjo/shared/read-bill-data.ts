@@ -4,6 +4,12 @@ type ReadResult<T> = {
   status: number;
 };
 
+/**
+ * 公開中の議案・説明を覚えておく秒数。
+ * 管理画面やSQLで直した文は、この秒数が過ぎた次のアクセスから順に新しくなる。
+ */
+export const ANJO_DATA_REVALIDATE_SECONDS = 60;
+
 /** 読み取り専用。書き込みや有料AI呼び出しには使用しない。 */
 export async function readBillData<T>(
   operation: "bill-list" | "bill-detail",
