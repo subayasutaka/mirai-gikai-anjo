@@ -61,7 +61,7 @@ describe("議案の読み取りの復旧", () => {
     expect(await result).toEqual(bill);
   });
 
-  it("応答しない通信を5秒で中止して、新しい接続で取得し直す", async () => {
+  it("最初の応答は10秒まで待ち、応答しなければ中止して新しい接続で取得し直す", async () => {
     fetchMock
       .mockImplementationOnce(
         (_url, init) =>
@@ -73,7 +73,7 @@ describe("議案の読み取りの復旧", () => {
       )
       .mockResolvedValueOnce(Response.json([bill]));
     const result = read();
-    await vi.advanceTimersByTimeAsync(4_999);
+    await vi.advanceTimersByTimeAsync(9_999);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0][1]?.signal?.aborted).toBe(false);
     await vi.runAllTimersAsync();

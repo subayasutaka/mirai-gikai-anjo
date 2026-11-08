@@ -65,7 +65,7 @@ describe("reading switches", () => {
         .map((control) => control.getAttribute("aria-checked"))
     ).toEqual(["true", "true"]);
   });
-  it("honors an explicit easy link", () => {
+  it("?difficulty=normal のリンクなら「かんたん」で始まる", () => {
     renderSettings("normal");
     expect(
       screen

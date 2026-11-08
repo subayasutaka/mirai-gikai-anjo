@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { isSearchIndexable, resolveSiteUrl } from "./search-indexing";
+import {
+  buildRobotsRules,
+  buildSitemapEntries,
+  isSearchIndexable,
+} from "./search-indexing";
 
 describe("isSearchIndexable", () => {
   it("認証なしの公開ページは検索エンジンに載せる", () => {
@@ -25,23 +29,32 @@ describe("isSearchIndexable", () => {
   });
 });
 
-describe("resolveSiteUrl", () => {
-  it("NEXT_PUBLIC_WEB_URL を優先し、末尾の / を外す", () => {
-    expect(
-      resolveSiteUrl({
-        NEXT_PUBLIC_WEB_URL: "https://example.test/",
-        VERCEL_PROJECT_PRODUCTION_URL: "other.example.test",
-      })
-    ).toBe("https://example.test");
+describe("buildRobotsRules", () => {
+  it("Basic認証で閉じている間は、どこも巡回させない", () => {
+    expect(buildRobotsRules(true, "https://example.test")).toEqual({
+      rules: { userAgent: "*", disallow: "/" },
+    });
   });
 
-  it("無ければ Vercel の本番ドメインを使う", () => {
-    expect(
-      resolveSiteUrl({ VERCEL_PROJECT_PRODUCTION_URL: "anjo.example.test" })
-    ).toBe("https://anjo.example.test");
+  it("公開中は全体を許し、下書きの確認用ページとAPIだけ断ってサイトマップを示す", () => {
+    expect(buildRobotsRules(false, "https://example.test")).toEqual({
+      rules: {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/preview/", "/api/"],
+      },
+      sitemap: "https://example.test/sitemap.xml",
+    });
   });
+});
 
-  it("どちらも無ければ手元の開発用URLにする", () => {
-    expect(resolveSiteUrl({})).toBe("http://localhost:3000");
+describe("buildSitemapEntries", () => {
+  it("パスにサイトのURLを付ける", () => {
+    expect(
+      buildSitemapEntries("https://example.test", ["/", "/bills"])
+    ).toEqual([
+      { url: "https://example.test/" },
+      { url: "https://example.test/bills" },
+    ]);
   });
 });

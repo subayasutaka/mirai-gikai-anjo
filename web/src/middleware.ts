@@ -1,4 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { isAnjoWebRoute } from "./features/anjo/shared/route-policy";
+import { isSearchIndexable } from "./features/anjo/shared/utils/search-indexing";
 import {
   DIFFICULTY_COOKIE_NAME,
   DIFFICULTY_COOKIE_OPTIONS,
@@ -10,8 +12,6 @@ import {
   getBasicAuthConfig,
   validateBasicAuth,
 } from "./lib/basic-auth";
-import { isAnjoWebRoute } from "./features/anjo/shared/route-policy";
-import { isSearchIndexable } from "./features/anjo/shared/utils/search-indexing";
 
 /**
  * 開発用プレビュー（/dev 配下）のルートか判定する。

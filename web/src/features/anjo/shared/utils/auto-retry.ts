@@ -9,7 +9,8 @@ export function shouldAutoRetry(
   lastRetryAt: string | null,
   now: number
 ): boolean {
+  if (!lastRetryAt) return true;
   const last = Number(lastRetryAt);
-  if (!lastRetryAt || !Number.isFinite(last)) return true;
+  if (!Number.isFinite(last)) return true;
   return now - last >= AUTO_RETRY_WINDOW_MS || now < last;
 }

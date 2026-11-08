@@ -10,17 +10,12 @@ export function BillLoadError() {
   const [retrying, setRetrying] = useState(false);
   useEffect(() => {
     // 最初のアクセスでDBの応答が遅れたときは、1回だけ自動で読み直す。
-    let last: string | null = null;
+    const now = Date.now();
     try {
-      last = sessionStorage.getItem(RETRY_KEY);
+      if (!shouldAutoRetry(sessionStorage.getItem(RETRY_KEY), now)) return;
+      sessionStorage.setItem(RETRY_KEY, String(now));
     } catch {
       return; // 記録できない環境では、くり返しを避けて手動に任せる。
-    }
-    if (!shouldAutoRetry(last, Date.now())) return;
-    try {
-      sessionStorage.setItem(RETRY_KEY, String(Date.now()));
-    } catch {
-      return;
     }
     setRetrying(true);
     const timer = setTimeout(() => window.location.reload(), 1_500);

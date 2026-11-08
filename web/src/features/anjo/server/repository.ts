@@ -8,7 +8,7 @@ import {
   readBillData,
 } from "../shared/read-bill-data";
 
-// 公開中の議案はしばらく覚えておき、初回アクセスや同時アクセスのたびにDBへ行かない。
+// 公開中の議案はしばらく覚えておき、アクセスのたびにDBへ行かない（期限切れ直後に同時に来た分は、それぞれ読みに行く）。
 // 失敗（例外）は覚えないので、障害が続いても復旧後すぐ最新に戻る。
 const listPublishedBills = unstable_cache(
   () =>

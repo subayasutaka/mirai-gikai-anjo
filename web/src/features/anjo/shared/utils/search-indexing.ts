@@ -1,5 +1,5 @@
 /** 検索エンジンに載せないパス（下書きの確認用・API）。 */
-const NOINDEX_PATH_PREFIXES = ["/preview/", "/api/"];
+export const NOINDEX_PATH_PREFIXES = ["/preview/", "/api/"];
 
 /**
  * 検索エンジンに載せてよいページか判定する。
@@ -13,20 +13,18 @@ export function isSearchIndexable(
   return !NOINDEX_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
-/** robots.txt で巡回を断るパス。 */
-export const ROBOTS_DISALLOW_PATHS = NOINDEX_PATH_PREFIXES;
+/** robots.txt の中身を決める。Basic認証で閉じている間は、どこも巡回させない。 */
+export function buildRobotsRules(basicAuthEnabled: boolean, siteUrl: string) {
+  if (basicAuthEnabled) {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
+  return {
+    rules: { userAgent: "*", allow: "/", disallow: NOINDEX_PATH_PREFIXES },
+    sitemap: `${siteUrl}/sitemap.xml`,
+  };
+}
 
-/**
- * 公開サイトのURL（末尾の / なし）を決める。
- * NEXT_PUBLIC_WEB_URL を優先し、無ければ Vercel の本番ドメインを使う。
- */
-export function resolveSiteUrl(
-  env: Record<string, string | undefined>
-): string {
-  const url =
-    env.NEXT_PUBLIC_WEB_URL ||
-    (env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "http://localhost:3000");
-  return url.replace(/\/+$/, "");
+/** sitemap.xml に載せる URL を、サイトのURLとパスの一覧から作る。 */
+export function buildSitemapEntries(siteUrl: string, paths: string[]) {
+  return paths.map((path) => ({ url: `${siteUrl}${path}` }));
 }
