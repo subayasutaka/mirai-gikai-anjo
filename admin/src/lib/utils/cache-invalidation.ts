@@ -11,7 +11,10 @@ export const WEB_CACHE_TAGS = {
 
 export type WebCacheTag = (typeof WEB_CACHE_TAGS)[keyof typeof WEB_CACHE_TAGS];
 
-/** 安城の閲覧画面は force-dynamic / no-store のため、遠隔キャッシュはない。 */
+/**
+ * 安城の閲覧画面は遠隔からキャッシュを消さない。
+ * 公開中の議案データは web 側で ANJO_DATA_REVALIDATE_SECONDS（60秒）ごとに新しくなる。
+ */
 export async function invalidateWebCache(
   _tags?: WebCacheTag[]
 ): Promise<void> {}

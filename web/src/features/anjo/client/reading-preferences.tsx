@@ -33,8 +33,11 @@ export function RubyText({ children }: { children: string }) {
   );
 }
 
+/** 初めて開いたときは「くわしく」。?difficulty=normal のリンクなら「かんたん」。 */
+const DEFAULT_DETAILED = true;
+
 const ReadingContext = createContext({
-  detailed: false,
+  detailed: DEFAULT_DETAILED,
   furigana: false,
   setDetailed: (_: boolean) => {},
   setFurigana: (_: boolean) => {},
@@ -47,7 +50,7 @@ export function ReadingPreferences({
   children: ReactNode;
   readings?: ReadingMap;
 }) {
-  const [detailed, setDetailed] = useState(false);
+  const [detailed, setDetailed] = useState(DEFAULT_DETAILED);
   const [furigana, setFurigana] = useState(false);
   useEffect(() => {
     try {

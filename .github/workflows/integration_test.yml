@@ -32,8 +32,10 @@ jobs:
         with:
           # v2.106.0 の auto_expose_new_tables 変更による権限エラーは、
           # supabase/migrations/20260719090000_grant_service_role_privileges_on_public_schema.sql
-          # の明示 GRANT で恒久対応済みのため latest を使用する (#878)
-          version: latest
+          # の明示 GRANT で恒久対応済み (#878)。
+          # CLI v3.0.0 (2026-11-02) は config.toml の [inbucket] を受け付けず起動に失敗するため、
+          # 設定を v3 向けに移すまでは v2 の最終版に固定する。
+          version: 2.122.1
 
       - name: Start Supabase
         run: supabase start -x studio,imgproxy,logflare,vector,realtime,edge-runtime,supavisor,inbucket

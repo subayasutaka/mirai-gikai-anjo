@@ -3,6 +3,8 @@
  * アプリケーション全体で使用する環境変数を一元管理
  */
 
+import { resolveSiteUrl } from "./site-url";
+
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   throw new Error("環境変数 NEXT_PUBLIC_SUPABASE_URL が設定されていません");
 }
@@ -55,7 +57,7 @@ if (
 }
 
 export const env = {
-  webUrl: process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000",
+  webUrl: resolveSiteUrl(process.env),
   adminUrl: process.env.ADMIN_URL || "http://localhost:3001",
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
   supabasePublishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,

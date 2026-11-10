@@ -1,4 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { isAnjoWebRoute } from "./features/anjo/shared/route-policy";
+import { isSearchIndexable } from "./features/anjo/shared/utils/search-indexing";
 import {
   DIFFICULTY_COOKIE_NAME,
   DIFFICULTY_COOKIE_OPTIONS,
@@ -10,7 +12,6 @@ import {
   getBasicAuthConfig,
   validateBasicAuth,
 } from "./lib/basic-auth";
-import { isAnjoWebRoute } from "./features/anjo/shared/route-policy";
 
 /**
  * 開発用プレビュー（/dev 配下）のルートか判定する。
@@ -24,14 +25,14 @@ export function isDevRoute(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   if (!isAnjoWebRoute(request.nextUrl.pathname))
     return new NextResponse("Not found", { status: 404 });
+  const authConfig = getBasicAuthConfig();
   const response = NextResponse.next();
-  response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  if (!isSearchIndexable(request.nextUrl.pathname, authConfig !== null))
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
   response.headers.set("Referrer-Policy", "no-referrer");
   response.headers.set("Cache-Control", "private, no-store");
   // URLパラメータからdifficulty Cookieをセット
   _applyDifficultyCookie(request, response);
-
-  const authConfig = getBasicAuthConfig();
 
   // Basic認証の設定がない場合はスキップ
   if (!authConfig) {
