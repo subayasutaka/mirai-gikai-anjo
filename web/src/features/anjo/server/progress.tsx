@@ -100,7 +100,7 @@ export function AnjoProgress({
         <span className="anjo-current-label">
           <MapPin size={15} aria-hidden="true" />
           <Furigana>
-            {current < 0 && kind !== "consent"
+            {current < 0 && kind !== "consent" && status !== "preparing"
               ? "状況を確認中"
               : getAnjoDocumentStatus(documentName, status)}
           </Furigana>
