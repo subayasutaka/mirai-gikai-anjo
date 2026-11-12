@@ -20,8 +20,9 @@ export function getAnjoDocumentKind(name: string): AnjoDocumentKind {
 export function getAnjoDocumentStatus(name: string, status: string): string {
   const kind = getAnjoDocumentKind(name);
   if (kind === "report") return "報告資料を掲載";
+  // 議会に出される前（説明会資料などで予定が示された段階）は種別を問わず「提出予定」。
+  if (status === "preparing") return "提出予定";
   if (kind === "consent") {
-    if (status === "preparing") return "提出予定";
     if (status === "enacted") return "採決・同意";
     if (status === "rejected") return "採決・不同意";
   }
@@ -33,8 +34,9 @@ export function getAnjoDocumentStatus(name: string, status: string): string {
   return ANJO_STATUS_LABELS[status] || "確認中";
 }
 
+/** 議会に出される前の案か（報告は採決がないため対象外）。 */
 export function isAnjoSubmissionPlanned(name: string, status: string) {
-  return getAnjoDocumentKind(name) === "consent" && status === "preparing";
+  return getAnjoDocumentKind(name) !== "report" && status === "preparing";
 }
 
 export function countAnjoDocuments(documents: { name: string }[]) {

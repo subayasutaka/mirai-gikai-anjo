@@ -31,10 +31,17 @@ describe("自治体の議案・認定・報告", () => {
     ])).toEqual({ bill: 2, certification: 1, consent: 1, report: 1 });
     expect(countAnjoDocuments([])).toEqual({ bill: 0, certification: 0, consent: 0, report: 0 });
   });
-  it("人事案の予定と実際の提出を、日付の経過ではなく登録状態で区別する", () => {
+  it("予定と実際の提出を、日付の経過ではなく登録状態で区別する", () => {
     expect(isAnjoSubmissionPlanned("同意第5号", "preparing")).toBe(true);
     expect(isAnjoSubmissionPlanned("同意第5号", "introduced")).toBe(false);
     expect(isAnjoSubmissionPlanned("同意第5号", "enacted")).toBe(false);
-    expect(isAnjoSubmissionPlanned("第61号議案", "preparing")).toBe(false);
+    expect(isAnjoSubmissionPlanned("第○号議案（仮番1） 職員給与", "preparing")).toBe(true);
+    expect(isAnjoSubmissionPlanned("第61号議案", "introduced")).toBe(false);
+    expect(isAnjoSubmissionPlanned("報告第12号", "preparing")).toBe(false);
+  });
+  it("議会に出される前の議案は「提出予定」と表示する", () => {
+    expect(getAnjoDocumentStatus("第○号議案（仮番1） 職員給与", "preparing")).toBe("提出予定");
+    expect(getAnjoDocumentStatus("諮問（仮番19） 人権擁護委員", "preparing")).toBe("提出予定");
+    expect(getAnjoDocumentStatus("第61号議案", "introduced")).toBe("上程");
   });
 });
